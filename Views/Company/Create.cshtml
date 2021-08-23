@@ -1,0 +1,28 @@
+﻿@model RealEstateModel
+
+<h5>Create new company</h5>
+
+@foreach (var item in Model.Brokers)
+{
+    Model.CompanyAdditionalModel.CreateFormBrokers.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.Name + " " + item.Surname });
+}
+
+@using (Html.BeginForm("Submit", "Company", FormMethod.Post))
+{
+    <div class="container-full" style="background-color:aliceblue">
+        <div class="container">
+            @Html.LabelFor(x => x.Company.Name)
+            @Html.TextBoxFor(x => x.Company.Name)
+            @Html.LabelFor(x => x.Company.City)
+            @Html.TextBoxFor(x => x.Company.City)
+            @Html.LabelFor(x => x.Company.Street)
+            @Html.TextBoxFor(x => x.Company.Street)
+            @Html.LabelFor(x => x.Company.Address)
+            @Html.TextBoxFor(x => x.Company.Address)
+
+            <label>Select brokers <label>
+            @Html.ListBoxFor(s => s.CompanyAdditionalModel.CreateFormSelectedBrokers, Model.CompanyAdditionalModel.CreateFormBrokers)
+            <input type="submit" value="Submit" />
+        </div>
+    </div>
+}

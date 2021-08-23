@@ -1,0 +1,23 @@
+﻿@model RealEstateModel
+
+<a asp-controller="Company" asp-action="Create">Add Company</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Address</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Companies)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Street @item.Address, @item.City</td>
+                <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id }) / <a asp-controller="Broker" asp-action="Create">Add broker</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

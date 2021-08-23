@@ -1,0 +1,24 @@
+﻿@model RealEstateModel
+
+    <a asp-controller="Apartment"
+       asp-action="Create">Add Apartment</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Apartment</th>
+            <th scope="col">Company</th>
+            <th scope="col">Broker</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Apartments)
+        {
+            <tr>
+                <td>@item.Apartment</td>
+                <td>@item.Company</td>
+                <td>@item.Broker</td>
+            </tr>
+        }
+    </tbody>
+</table>

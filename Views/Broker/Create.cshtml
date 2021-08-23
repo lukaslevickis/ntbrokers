@@ -1,0 +1,16 @@
+﻿@model BrokerModel
+
+<h5>Create new broker</h5>
+
+@using (Html.BeginForm("Submit", "Broker", FormMethod.Post))
+{
+    <div class="container-full" style="background-color:aliceblue">
+        <div class="container">
+            @Html.LabelFor(x => x.Name)
+            @Html.TextBoxFor(x => x.Name)
+            @Html.LabelFor(x => x.Surname)
+            @Html.TextBoxFor(x => x.Surname)
+            <input type="submit" value="Submit" />
+        </div>
+    </div>
+}
