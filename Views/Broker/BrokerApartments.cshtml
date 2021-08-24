@@ -1,0 +1,25 @@
+﻿@model RealEstateModel
+
+@Html.ActionLink("Add apartment", "AddApartment", new { brokerId = Model.Broker.Id })
+
+<h3>List of @Model.Broker.Name @Model.Broker.Surname apartments</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">City</th>
+            <th scope="col">Address</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Apartments)
+        {
+            <tr>
+                <td>@item.City</td>
+                <td>@item.Street @item.Address</td>
+                <td>todo remove</td>
+            </tr>
+        }
+    </tbody>
+</table>

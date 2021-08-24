@@ -15,47 +15,41 @@ namespace NTBrokers.Services
             _connection = connection;
         }
 
-        internal List<ApartmentAdditionalModel> Read()
+        internal List<ApartmentModel> Read()
         {
-            List<ApartmentAdditionalModel> items = new();
+            List<ApartmentModel> items = new();
 
             _connection.Open();
 
             //many to many left joins
-            using var command = new SqlCommand("SELECT dbo.House.ID, dbo.House.City, dbo.House.Street, dbo.House.Address, " +
-                                               "dbo.House.FlatFloor, dbo.House.BuildingFloors, dbo.House.Area, dbo.House.BrokerId, " +
-                                               "dbo.House.CompanyId, dbo.Company.Name, dbo.Broker.Name, dbo.Broker.Surname " +
-                                                "FROM dbo.House " +
-                                               //"LEFT OUTER JOIN dbo.CompanyBroker " +
-                                               // "ON dbo.House.BrokerId = dbo.CompanyBroker.BrokerId " +
-                                               // "LEFT OUTER JOIN dbo.Broker " +
-                                               //  "ON dbo.CompanyBroker.BrokerId = dbo.Broker.ID " +
-                                               //"LEFT OUTER JOIN dbo.Company " +
-                                               // "ON dbo.CompanyBroker.CompanyId = dbo.Company.ID;", _connection);
+            using var command = new SqlCommand("SELECT dbo.House2.ID, dbo.House2.City, dbo.House2.Street, dbo.House2.Address, " +
+                                               "dbo.House2.FlatFloor, dbo.House2.BuildingFloors, dbo.House2.Area, dbo.House2.BrokerId, " +
+                                               "dbo.House2.CompanyId, dbo.Company.Name, dbo.Broker.Name, dbo.Broker.Surname " +
+                                                "FROM dbo.House2 " +
                                                "LEFT OUTER JOIN dbo.Company " +
-                                                "ON dbo.House.CompanyId = dbo.Company.ID " +
+                                                "ON dbo.House2.CompanyId = dbo.Company.ID " +
                                                "LEFT OUTER JOIN dbo.Broker " +
-                                                "ON dbo.Broker.ID = dbo.House.BrokerId;", _connection);
+                                                "ON dbo.Broker.ID = dbo.House2.BrokerId;", _connection);
 
             using var reader = command.ExecuteReader();
 
             while (reader.Read())
             {
                 items.Add(
-                new ApartmentAdditionalModel
+                new ApartmentModel
                 {
-                    //Id = reader.GetInt32(0),
-                    //City = reader.GetString(1),
-                    //Street = reader.GetString(2),
-                    //Address = reader.GetInt32(3),
-                    //FlatFloor = reader.GetInt32(4),
-                    //BuildingFloors = reader.GetInt32(5),
-                    //Area = reader.GetInt32(6),
-                    //BrokerId = reader.GetInt32(7),
-                    //CompanyId = reader.GetInt32(8),
-                    Apartment = reader.GetString(2) + " " + reader.GetInt32(3),
+                    Id = reader.GetInt32(0),
+                    City = reader.GetString(1),
+                    Street = reader.GetString(2),
+                    Address = reader.GetString(3),
+                    FlatFloor = reader.GetInt32(4),
+                    BuildingFloors = reader.GetInt32(5),
+                    Area = reader.GetInt32(6),
+                    BrokerId = reader.IsDBNull(7) ? null : reader.GetInt32(7),
+                    CompanyId = reader.GetInt32(8),
+                    Apartment = reader.GetString(2) + " " + reader.GetString(3),
                     Company = reader.GetString(9),
-                    Broker = reader.GetString(10) + " " + reader.GetString(11),
+                    Broker = (reader.IsDBNull(10) ? null : reader.GetString(10)) + " " + (reader.IsDBNull(10) ? null : reader.GetString(11)),
 
                 });
             }
@@ -75,12 +69,6 @@ namespace NTBrokers.Services
                                                $"null, '{model.Apartment.CompanyId}');", _connection);
             command.ExecuteNonQuery();
             _connection.Close();
-
-            //_connection.Open();
-            //using var command2 = new SqlCommand($"INSERT INTO dbo.CompanyBroker (BrokerId, CompanyId) " +
-            //                                    $"values ('{model.Apartment.BrokerId}', '{model.Apartment.CompanyId}');", _connection);
-            //command2.ExecuteNonQuery();
-            //_connection.Close();
         }
     }
 }

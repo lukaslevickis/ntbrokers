@@ -21,7 +21,7 @@ namespace NTBrokers.Services
         public RealEstateModel GetGeneralDBData()
         {
             RealEstateModel model = new();
-            //model.Apartments = _apartmentDBService.Read();
+            model.Apartments = _apartmentDBService.Read();
             model.Companies = _companyDBService.Read();
             model.Brokers =_brokerDBService.Read();
 

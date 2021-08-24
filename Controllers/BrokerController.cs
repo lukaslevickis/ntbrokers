@@ -38,6 +38,29 @@ namespace NTBrokers.Controllers
             return View();
         }
 
+        public IActionResult BrokerApartments(int brokerId)
+        {
+            RealEstateModel data = new();
+            data.Broker = _brokerDBService.Read().Where(x => x.Id == brokerId).FirstOrDefault();
+            data.Apartments = _brokerDBService.BrokerApartments(brokerId);
+            return View("BrokerApartments", data);
+        }
 
+        public IActionResult AddApartment(int brokerId)
+        {
+            RealEstateModel data = new();
+            data.Broker.Id = brokerId;
+            data.Apartments = _brokerDBService.AddApartment(brokerId);
+            return View("AddApartment", data);
+        }
+
+        public IActionResult SubmitApartment(int brokerId, int apartmentId)
+        {
+            _brokerDBService.SubmitApartment(brokerId, apartmentId);
+            RealEstateModel data = new();
+            data.Broker = _brokerDBService.Read().Where(x => x.Id == brokerId).FirstOrDefault();
+            data.Apartments = _brokerDBService.BrokerApartments(brokerId);
+            return View("BrokerApartments", data);
+        }
     }
 }
