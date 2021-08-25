@@ -1,4 +1,4 @@
-﻿@model RealEstateModel
+﻿@model List<NTBrokers.Models.Companies.CompanyModel>
 
 <a asp-controller="Company" asp-action="Create">Add Company</a>
 
@@ -11,10 +11,10 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Companies)
+        @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Name</td>
+                <td>@Html.ActionLink($"{@item.Name}", "CompanyBrokers", new { companyId = item.Id })</td>
                 <td>@item.Street @item.Address, @item.City</td>
                 <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id }) / <a asp-controller="Broker" asp-action="Create">Add broker</a></td>
             </tr>

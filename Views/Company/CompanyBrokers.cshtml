@@ -1,7 +1,6 @@
 ﻿@model List<NTBrokers.Models.Brokers.BrokerModel>
 
-<a asp-controller="Broker"
-   asp-action="Create">Add broker</a>
+@*<h3>Brokers in @Model.Company.Name company</h3>*@
 
 <table class="table">
     <thead>
@@ -17,7 +16,7 @@
             <tr>
                 <td>@item.Name</td>
                 <td>@item.Surname</td>
-                <td>@Html.ActionLink("Apartments", "BrokerApartments", new { brokerId = item.Id })</td>
+                <td>todo remove</td>
             </tr>
         }
     </tbody>

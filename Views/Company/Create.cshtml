@@ -1,10 +1,10 @@
-﻿@model RealEstateModel
+﻿@model NTBrokers.Models.Companies.CompanyCreateModel
 
 <h5>Create new company</h5>
 
 @foreach (var item in Model.Brokers)
 {
-    Model.CompanyAdditionalModel.CreateFormBrokers.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.Name + " " + item.Surname });
+    Model.CreateFormBrokers.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.Name + " " + item.Surname });
 }
 
 @using (Html.BeginForm("Submit", "Company", FormMethod.Post))
@@ -21,7 +21,7 @@
             @Html.TextBoxFor(x => x.Company.Address)
 
             <label>Select brokers <label>
-            @Html.ListBoxFor(s => s.CompanyAdditionalModel.CreateFormSelectedBrokers, Model.CompanyAdditionalModel.CreateFormBrokers)
+            @Html.ListBoxFor(s => s.CreateFormSelectedBrokers, Model.CreateFormBrokers)
             <input type="submit" value="Submit" />
         </div>
     </div>

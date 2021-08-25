@@ -26,9 +26,9 @@ namespace NTBrokers
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ApartmentDBService>();
-            services.AddScoped<BrokerDBService>();
             services.AddScoped<CompanyDBService>();
-            services.AddScoped<RealEstateService>();
+            services.AddScoped<BrokerDBService>();
+            services.AddScoped<MainService>();
             services.AddTransient<SqlConnection>(_ => new SqlConnection(Configuration["ConnectionStrings:Default"]));
             services.AddControllersWithViews();
         }

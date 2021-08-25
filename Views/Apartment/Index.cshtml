@@ -1,4 +1,4 @@
-﻿@model RealEstateModel
+﻿@model List<NTBrokers.Models.Apartments.ApartmentModel>
 
     <a asp-controller="Apartment"
        asp-action="Create">Add Apartment</a>
@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Apartments)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>@item.Apartment</td>

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.SqlClient;
+using NTBrokers.Helpers;
 using NTBrokers.Models;
+using NTBrokers.Models.Apartments;
 
 namespace NTBrokers.Services
 {
@@ -15,7 +17,7 @@ namespace NTBrokers.Services
             _connection = connection;
         }
 
-        internal List<ApartmentModel> Read()
+        internal List<ApartmentModel> GetAll()
         {
             List<ApartmentModel> items = new();
 
@@ -59,16 +61,15 @@ namespace NTBrokers.Services
             return items;
         }
 
-        public void Create(RealEstateModel model)
+        public void Create(ApartmentIndexModel model)
         {
-            _connection.Open();
-            using var command = new SqlCommand($"INSERT INTO dbo.House2 (City, Street, Address, FlatFloor, " +
+            string query = $"INSERT INTO dbo.House2 (City, Street, Address, FlatFloor, " +
                                                $"BuildingFloors, Area, BrokerId, CompanyId) " +
                                                $"values ('{model.Apartment.City}', '{model.Apartment.Street}', '{model.Apartment.Address}'," +
                                                $"'{model.Apartment.FlatFloor}', '{model.Apartment.BuildingFloors}', '{model.Apartment.Area}'," +
-                                               $"null, '{model.Apartment.CompanyId}');", _connection);
-            command.ExecuteNonQuery();
-            _connection.Close();
+                                               $"null, '{model.Apartment.CompanyId}');";
+
+            ConnectionsHelpers.ExecuteQuery(query, _connection);
         }
     }
 }

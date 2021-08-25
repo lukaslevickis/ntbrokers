@@ -1,4 +1,4 @@
-﻿namespace NTBrokers.Models
+﻿namespace NTBrokers.Models.Brokers
 {
     public class BrokerModel
     {

@@ -1,4 +1,4 @@
-﻿namespace NTBrokers.Models
+﻿namespace NTBrokers.Models.Companies
 {
     public class CompanyModel
     {

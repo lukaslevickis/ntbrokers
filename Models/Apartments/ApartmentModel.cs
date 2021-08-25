@@ -1,4 +1,4 @@
-﻿namespace NTBrokers.Models
+﻿namespace NTBrokers.Models.Apartments
 {
     public class ApartmentModel
     {

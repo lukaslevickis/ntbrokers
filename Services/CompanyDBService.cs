@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.SqlClient;
+using NTBrokers.Helpers;
 using NTBrokers.Models;
+using NTBrokers.Models.Brokers;
+using NTBrokers.Models.Companies;
 
 namespace NTBrokers.Services
 {
@@ -13,9 +16,10 @@ namespace NTBrokers.Services
         public CompanyDBService(SqlConnection connection)
         {
             _connection = connection;
+
         }
 
-        public List<CompanyModel> Read()
+        public List<CompanyModel> GetAll()
         {
             List<CompanyModel> items = new();
 
@@ -41,30 +45,23 @@ namespace NTBrokers.Services
             return items;
         }
 
-        public void Create(RealEstateModel model)
+        public void Create(CompanyCreateModel model)
         {
-            _connection.Open();
+            string query = $"INSERT into dbo.Company (Name, City, Street, Address) values ('{model.Company.Name}', " +
+                           $"'{model.Company.City}', '{model.Company.Street}', '{model.Company.Address}');";
 
-            using var command = new SqlCommand($"INSERT into dbo.Company (Name, City, Street, Address) values ('{model.Company.Name}', '{model.Company.City}', '{model.Company.Street}', '{model.Company.Address}');", _connection);
-            command.ExecuteNonQuery();
-
-            _connection.Close();
+            ConnectionsHelpers.ExecuteQuery(query, _connection);
 
             List<CompanyModel> id = GetCompanyId();
             int companyId = id.LastOrDefault().Id;
 
-            string sqlQuery = "";
-            foreach (string brokerId in model.CompanyAdditionalModel.CreateFormSelectedBrokers)
+            string query2 = "";
+            foreach (string brokerId in model.CreateFormSelectedBrokers)
             {
-                sqlQuery += $"INSERT into dbo.CompanyBroker (BrokerId, CompanyId) values ({brokerId}, {companyId});";
+                query2 += $"INSERT into dbo.CompanyBroker (BrokerId, CompanyId) values ({brokerId}, {companyId});";
             }
 
-            _connection.Open();
-
-            using var command2 = new SqlCommand(sqlQuery, _connection);
-            command2.ExecuteNonQuery();
-
-            _connection.Close();
+            ConnectionsHelpers.ExecuteQuery(query2, _connection);
         }
 
         public List<CompanyModel> GetCompanyId()
@@ -89,6 +86,25 @@ namespace NTBrokers.Services
             _connection.Close();
 
             return items;
+        }
+
+        internal List<BrokerModel> CompanyBrokers(int companyId)//todo code dublication
+        {
+            List<BrokerModel> brokers = new List<BrokerModel>();
+            List<int> brokersIds = new List<int>();
+
+            _connection.Open();
+
+            using var command = new SqlCommand($"SELECT * FROM dbo.CompanyBroker WHERE CompanyId = {companyId}", _connection);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                brokersIds.Add(reader.GetInt32(0));
+            }
+
+            _connection.Close();
+
+            return brokers;// _mainService._brokerDBService.GetAll().Where(x => brokersIds.Contains(x.Id)).ToList();
         }
     }
 }

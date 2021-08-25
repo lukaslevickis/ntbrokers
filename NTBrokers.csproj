@@ -16,11 +16,19 @@
     <None Remove="Views\Company\" />
     <None Remove="Services\" />
     <None Remove="Microsoft.Data.SqlClient" />
+    <None Remove="Models\Apartments\" />
+    <None Remove="Models\Brokers\" />
+    <None Remove="Models\Companies\" />
+    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Apartment\" />
     <Folder Include="Views\Broker\" />
     <Folder Include="Views\Company\" />
     <Folder Include="Services\" />
+    <Folder Include="Models\Apartments\" />
+    <Folder Include="Models\Brokers\" />
+    <Folder Include="Models\Companies\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

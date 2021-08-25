@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NTBrokers.Models;
+using NTBrokers.Models.Brokers;
 using NTBrokers.Services;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,24 +13,24 @@ namespace NTBrokers.Controllers
 {
     public class BrokerController : Controller
     {
-        private readonly BrokerDBService _brokerDBService;
+        private readonly MainService _mainService;
 
-        public BrokerController(BrokerDBService brokerDBService)
+        public BrokerController(MainService mainService)
         {
-            _brokerDBService = brokerDBService;
+            _mainService = mainService;
         }
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            List<BrokerModel> data = _brokerDBService.Read();
+            List<BrokerModel> data = _mainService._brokerDBService.GetAll();
             return View(data);
         }
 
         public IActionResult Submit(BrokerModel model)
         {
-            _brokerDBService.Create(model);
-            List<BrokerModel> data = _brokerDBService.Read();
+            _mainService._brokerDBService.Create(model);
+            List<BrokerModel> data = _mainService._brokerDBService.GetAll();
             return View("Index", data);
         }
 
@@ -40,26 +41,35 @@ namespace NTBrokers.Controllers
 
         public IActionResult BrokerApartments(int brokerId)
         {
-            RealEstateModel data = new();
-            data.Broker = _brokerDBService.Read().Where(x => x.Id == brokerId).FirstOrDefault();
-            data.Apartments = _brokerDBService.BrokerApartments(brokerId);
+            BrokerApartmentModel data = new()
+            {
+                Broker = _mainService._brokerDBService.GetAll().Where(x => x.Id == brokerId).FirstOrDefault(),
+                Apartments = _mainService._brokerDBService.BrokerApartments(brokerId)
+            };
+
             return View("BrokerApartments", data);
         }
 
         public IActionResult AddApartment(int brokerId)
         {
-            RealEstateModel data = new();
-            data.Broker.Id = brokerId;
-            data.Apartments = _brokerDBService.AddApartment(brokerId);
+            BrokerApartmentModel data = new BrokerApartmentModel()
+            {
+                BrokerId = brokerId,
+                Apartments = _mainService._brokerDBService.AddApartment(brokerId)
+            };
+
             return View("AddApartment", data);
         }
 
         public IActionResult SubmitApartment(int brokerId, int apartmentId)
         {
-            _brokerDBService.SubmitApartment(brokerId, apartmentId);
-            RealEstateModel data = new();
-            data.Broker = _brokerDBService.Read().Where(x => x.Id == brokerId).FirstOrDefault();
-            data.Apartments = _brokerDBService.BrokerApartments(brokerId);
+            _mainService._brokerDBService.SubmitApartment(brokerId, apartmentId);
+            BrokerApartmentModel data = new()
+            {
+                Broker = _mainService._brokerDBService.GetAll().Where(x => x.Id == brokerId).FirstOrDefault(),
+                Apartments = _mainService._brokerDBService.BrokerApartments(brokerId)
+            };
+
             return View("BrokerApartments", data);
         }
     }

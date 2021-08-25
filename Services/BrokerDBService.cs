@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.SqlClient;
-using NTBrokers.Models;
+using NTBrokers.Helpers;
+using NTBrokers.Models.Apartments;
+using NTBrokers.Models.Brokers;
 
 namespace NTBrokers.Services
 {
     public class BrokerDBService
     {
         private readonly SqlConnection _connection;
-        private readonly ApartmentDBService _apartmentDBService;
-        private readonly CompanyDBService _companyDBService;
+        private readonly MainService _mainService;
 
-        public BrokerDBService(SqlConnection connection, ApartmentDBService apartmentDBService, CompanyDBService companyDBService)
+        public BrokerDBService(SqlConnection connection, MainService mainService)
         {
             _connection = connection;
-            _apartmentDBService = apartmentDBService;
-            _companyDBService = companyDBService;
+            _mainService = mainService;
         }
 
-        public List<BrokerModel> Read()
+        public List<BrokerModel> GetAll()
         {
             List<BrokerModel> items = new();
 
@@ -45,17 +45,14 @@ namespace NTBrokers.Services
 
         public void Create(BrokerModel model)
         {
-            _connection.Open();
+            string query = $"INSERT into dbo.Broker (Name, Surname) values ('{model.Name}', '{model.Surname}');";
 
-            using var command = new SqlCommand($"INSERT into dbo.Broker (Name, Surname) values ('{model.Name}', '{model.Surname}');", _connection);
-            command.ExecuteNonQuery();
-
-            _connection.Close();
+            ConnectionsHelpers.ExecuteQuery(query, _connection);
         }
 
         internal List<ApartmentModel> BrokerApartments(int brokerId)
         {
-            return _apartmentDBService.Read().Where(x => x.BrokerId == brokerId).ToList();
+            return _mainService._apartmentDBService.GetAll().Where(x => x.BrokerId == brokerId).ToList();
         }
 
         internal List<ApartmentModel> AddApartment(int brokerId)
@@ -75,23 +72,20 @@ namespace NTBrokers.Services
 
             _connection.Close();
 
-            List<string> brokerCompaniesNames = _companyDBService.Read()
+            List<string> brokerCompaniesNames = _mainService._companyDBService.GetAll()
                                                            .Where(company => companiesIds.Contains(company.Id)).ToList()
                                                            .Select(x => x.Name).ToList();
 
-            return _apartmentDBService.Read()
+            return _mainService._apartmentDBService.GetAll()
                                       .Where(a => string.IsNullOrEmpty(a.BrokerId.ToString())).ToList()
                                       .Where(b => brokerCompaniesNames.Contains(b.Company)).ToList();
         }
 
         internal void SubmitApartment(int brokerId, int apartmentId)
         {
-            _connection.Open();
+            string query = $"update dbo.House2 set BrokerId = {brokerId} WHERE ID = {apartmentId};";
 
-            using var command = new SqlCommand($"update dbo.House2 set BrokerId = {brokerId} WHERE ID = {apartmentId};", _connection);
-            command.ExecuteNonQuery();
-
-            _connection.Close();
+            ConnectionsHelpers.ExecuteQuery(query, _connection);
         }
     }
 }
