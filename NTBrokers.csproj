@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.7" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0" />
+    <PackageReference Include="Dapper" Version="2.0.90" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +21,10 @@
     <None Remove="Models\Brokers\" />
     <None Remove="Models\Companies\" />
     <None Remove="Helpers\" />
+    <None Remove="Interfaces\" />
+    <None Remove="Dapper" />
+    <None Remove="Context\" />
+    <None Remove="DAL\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Apartment\" />
@@ -30,5 +35,7 @@
     <Folder Include="Models\Brokers\" />
     <Folder Include="Models\Companies\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Context\" />
+    <Folder Include="DAL\" />
   </ItemGroup>
 </Project>

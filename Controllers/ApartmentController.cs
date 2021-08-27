@@ -28,7 +28,11 @@ namespace NTBrokers.Controllers
 
         public IActionResult Create()
         {
-            return View(new ApartmentIndexModel { Apartment = new ApartmentModel(), Companies = _mainService._companyDBService.GetAll() });
+            return View(new ApartmentIndexModel
+                        {
+                            Apartment = new ApartmentModel(),
+                            Companies = _mainService._companyDBService.GetAll()
+                        });
         }
 
         public IActionResult Submit(ApartmentIndexModel model)

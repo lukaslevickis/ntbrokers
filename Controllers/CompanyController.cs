@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NTBrokers.DAL;
 using NTBrokers.Models;
+using NTBrokers.Models.Brokers;
 using NTBrokers.Models.Companies;
 using NTBrokers.Services;
 
@@ -14,24 +16,26 @@ namespace NTBrokers.Controllers
 {
     public class CompanyController : Controller
     {
-        private readonly MainService _mainService;
+        private UnitOfWork _unitOfWork;
 
-        public CompanyController(CompanyDBService companyDBService, MainService mainService)
+        public CompanyController(DapperContext context)
         {
-            _mainService = mainService;
+            _unitOfWork = new UnitOfWork(context);
         }
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            return View(_mainService._companyDBService.GetAll());
+            CompanyModel company = new();
+            return View(_unitOfWork.CompanyRepository.GetAll(company.TableName));
         }
 
         public IActionResult Create()
         {
+            BrokerModel broker = new();
             CompanyCreateModel data = new CompanyCreateModel()
             {
-                Brokers = _mainService._brokerDBService.GetAll(),
+                Brokers = _unitOfWork.BrokerRepository.GetAll(broker.TableName),
                 Company = new CompanyModel()
             };
 
@@ -40,13 +44,15 @@ namespace NTBrokers.Controllers
 
         public IActionResult Submit(CompanyCreateModel model)
         {
-            _mainService._companyDBService.Create(model);
-            return View("Index", _mainService._companyDBService.GetAll());
+            BrokerModel broker = new();
+            _unitOfWork.CompanyCreateRepository.Create(model);
+            //_unitOfWork.CompanyRepository.Create(model.CreateFormSelectedBrokers);
+            return View("Index", _unitOfWork.CompanyRepository.GetAll(broker.TableName));
         }
 
-        public IActionResult CompanyBrokers(int companyId)
-        {
-            return View(_mainService._companyDBService.CompanyBrokers(companyId));
-        }
+        //public IActionResult CompanyBrokers(int companyId)
+        //{
+        //    return View(_mainService._companyDBService.CompanyBrokers(companyId));
+        //}
     }
 }

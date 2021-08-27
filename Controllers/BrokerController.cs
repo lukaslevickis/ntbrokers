@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NTBrokers.DAL;
 using NTBrokers.Models;
 using NTBrokers.Models.Brokers;
 using NTBrokers.Services;
@@ -13,24 +14,28 @@ namespace NTBrokers.Controllers
 {
     public class BrokerController : Controller
     {
-        private readonly MainService _mainService;
+        private UnitOfWork _unitOfWork;
 
-        public BrokerController(MainService mainService)
+        public BrokerController(DapperContext context)
         {
-            _mainService = mainService;
+            _unitOfWork = new UnitOfWork(context);
         }
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            List<BrokerModel> data = _mainService._brokerDBService.GetAll();
+            BrokerModel broker = new();
+            List<BrokerModel> data = _unitOfWork.BrokerRepository.GetAll(broker.TableName);
+
             return View(data);
         }
 
         public IActionResult Submit(BrokerModel model)
         {
-            _mainService._brokerDBService.Create(model);
-            List<BrokerModel> data = _mainService._brokerDBService.GetAll();
+            _unitOfWork.BrokerRepository.Create(model);
+            BrokerModel broker = new();
+            List<BrokerModel> data = _unitOfWork.BrokerRepository.GetAll(broker.TableName);
+
             return View("Index", data);
         }
 
@@ -39,38 +44,38 @@ namespace NTBrokers.Controllers
             return View();
         }
 
-        public IActionResult BrokerApartments(int brokerId)
-        {
-            BrokerApartmentModel data = new()
-            {
-                Broker = _mainService._brokerDBService.GetAll().Where(x => x.Id == brokerId).FirstOrDefault(),
-                Apartments = _mainService._brokerDBService.BrokerApartments(brokerId)
-            };
+        //public IActionResult BrokerApartments(int brokerId)
+        //{
+        //    BrokerApartmentModel data = new()
+        //    {
+        //        Broker = _mainService._brokerDBService.GetAll().Where(x => x.Id == brokerId).FirstOrDefault(),
+        //        Apartments = _mainService._brokerDBService.BrokerApartments(brokerId)
+        //    };
 
-            return View("BrokerApartments", data);
-        }
+        //    return View("BrokerApartments", data);
+        //}
 
-        public IActionResult AddApartment(int brokerId)
-        {
-            BrokerApartmentModel data = new BrokerApartmentModel()
-            {
-                BrokerId = brokerId,
-                Apartments = _mainService._brokerDBService.AddApartment(brokerId)
-            };
+        //public IActionResult AddApartment(int brokerId)
+        //{
+        //    BrokerApartmentModel data = new BrokerApartmentModel()
+        //    {
+        //        BrokerId = brokerId,
+        //        Apartments = _mainService._brokerDBService.AddApartment(brokerId)
+        //    };
 
-            return View("AddApartment", data);
-        }
+        //    return View("AddApartment", data);
+        //}
 
-        public IActionResult SubmitApartment(int brokerId, int apartmentId)
-        {
-            _mainService._brokerDBService.SubmitApartment(brokerId, apartmentId);
-            BrokerApartmentModel data = new()
-            {
-                Broker = _mainService._brokerDBService.GetAll().Where(x => x.Id == brokerId).FirstOrDefault(),
-                Apartments = _mainService._brokerDBService.BrokerApartments(brokerId)
-            };
+        //public IActionResult SubmitApartment(int brokerId, int apartmentId)
+        //{
+        //    _mainService._brokerDBService.SubmitApartment(brokerId, apartmentId);
+        //    BrokerApartmentModel data = new()
+        //    {
+        //        Broker = _mainService._brokerDBService.GetAll().Where(x => x.Id == brokerId).FirstOrDefault(),
+        //        Apartments = _mainService._brokerDBService.BrokerApartments(brokerId)
+        //    };
 
-            return View("BrokerApartments", data);
-        }
+        //    return View("BrokerApartments", data);
+        //}
     }
 }

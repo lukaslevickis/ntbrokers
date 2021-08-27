@@ -15,5 +15,7 @@ namespace NTBrokers.Services
             _companyDBService = companyDBService;
             _brokerDBService = brokerDBService;
         }
+
+        //lists todo DbSet<Developer> Developers
     }
 }

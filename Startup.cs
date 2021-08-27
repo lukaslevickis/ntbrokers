@@ -9,6 +9,8 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NTBrokers.DAL;
+using NTBrokers.Repositories;
 using NTBrokers.Services;
 
 namespace NTBrokers
@@ -25,11 +27,15 @@ namespace NTBrokers
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ApartmentDBService>();
-            services.AddScoped<CompanyDBService>();
-            services.AddScoped<BrokerDBService>();
-            services.AddScoped<MainService>();
-            services.AddTransient<SqlConnection>(_ => new SqlConnection(Configuration["ConnectionStrings:Default"]));
+            services.AddScoped<DapperContext>();
+            //services.AddTransient<IGenericRepository<T>, GenericRepository<T>>();
+            services.AddScoped<IBrokerRepository, BrokerRepository>();//todo
+
+            //services.AddScoped<ApartmentDBService>();
+            //services.AddScoped<CompanyDBService>();
+            //services.AddScoped<BrokerDBService>();
+            //services.AddScoped<MainService>();
+            //services.AddTransient<SqlConnection>(_ => new SqlConnection(Configuration["ConnectionStrings:Default"]));
             services.AddControllersWithViews();
         }
 
@@ -57,7 +63,7 @@ namespace NTBrokers
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Apartment}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

@@ -52,6 +52,8 @@ namespace NTBrokers.Services
 
             ConnectionsHelpers.ExecuteQuery(query, _connection);
 
+
+            ////////////todo
             List<CompanyModel> id = GetCompanyId();
             int companyId = id.LastOrDefault().Id;
 
