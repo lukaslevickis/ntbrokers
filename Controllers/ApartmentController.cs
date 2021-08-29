@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using NTBrokers.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using NTBrokers.DAL;
 using NTBrokers.Models.Apartments;
-using NTBrokers.Services;
+using NTBrokers.Models.Companies;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,32 +9,35 @@ namespace NTBrokers.Controllers
 {
     public class ApartmentController : Controller
     {
-        private readonly MainService _mainService;
+        private UnitOfWork _unitOfWork;
 
-        public ApartmentController(MainService mainService)
+        public ApartmentController(DapperContext context)
         {
-            _mainService = mainService;
+            _unitOfWork = new UnitOfWork(context);
         }
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            return View(_mainService._apartmentDBService.GetAll());
+            return View(_unitOfWork.CustomApartmentRepository.GetAll());
         }
 
         public IActionResult Create()
         {
-            return View(new ApartmentIndexModel
-                        {
-                            Apartment = new ApartmentModel(),
-                            Companies = _mainService._companyDBService.GetAll()
-                        });
+            CompanyModel company = new();
+            var aa = new ApartmentCreateModel
+            {
+                Apartment = new ApartmentModel(),
+                Companies = _unitOfWork.CompanyRepository.GetAll(company.TableName)
+            };
+
+            return View(aa);
         }
 
-        public IActionResult Submit(ApartmentIndexModel model)
+        public IActionResult Submit(ApartmentCreateModel model)
         {
-            _mainService._apartmentDBService.Create(model);
-            return View("Index", _mainService._apartmentDBService.GetAll());
+            _unitOfWork.CustomApartmentRepository.Create(model.Apartment);
+            return View("Index", _unitOfWork.CustomApartmentRepository.GetAll());
         }
     }
 }

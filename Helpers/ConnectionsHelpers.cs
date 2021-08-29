@@ -1,18 +1,18 @@
 ﻿using System;
+using Dapper;
 using Microsoft.Data.SqlClient;
+using NTBrokers.DAL;
 
 namespace NTBrokers.Helpers
 {
     public static class ConnectionsHelpers
     {
-        public static void ExecuteQuery(string query, SqlConnection connection)
+        public static void ExecuteQuery(string query, DapperContext context)
         {
-            connection.Open();
-
-            using var command = new SqlCommand(query, connection);
-            command.ExecuteNonQuery();
-
-            connection.Close();
+            using (var connection = context.CreateConnection())
+            {
+                connection.Execute(query);
+            }
         }
     }
 }

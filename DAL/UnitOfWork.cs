@@ -1,4 +1,7 @@
 ﻿using System;
+using NTBrokers.DAL.Repositories;
+using NTBrokers.Models;
+using NTBrokers.Models.Apartments;
 using NTBrokers.Models.Brokers;
 using NTBrokers.Models.Companies;
 
@@ -7,13 +10,30 @@ namespace NTBrokers.DAL
     public class UnitOfWork
     {
         private DapperContext _context;
+        private GenericRepository<ApartmentModel> _apartmentRepository;
         private GenericRepository<BrokerModel> _brokerRepository;
         private GenericRepository<CompanyModel> _companyRepository;
-        private GenericRepository<CompanyCreateModel> _companyCreatewRepository;
+        private GenericRepository<CompanyBrokerModel> _companyBrokerRepository;
+        private CompanyRepository _customCompanyRepository;
+        private ApartmentRepository _customApartmentRepository;
+        private BrokerRepository _customBrokerRepository;
 
         public UnitOfWork(DapperContext context)
         {
             _context = context;
+        }
+
+        public GenericRepository<ApartmentModel> ApartmentRepository
+        {
+            get
+            {
+                if (this._apartmentRepository == null)
+                {
+                    this._apartmentRepository = new GenericRepository<ApartmentModel>(_context);
+                }
+
+                return _apartmentRepository;
+            }
         }
 
         public GenericRepository<BrokerModel> BrokerRepository
@@ -42,16 +62,55 @@ namespace NTBrokers.DAL
             }
         }
 
-        public GenericRepository<CompanyCreateModel> CompanyCreateRepository
+        public GenericRepository<CompanyBrokerModel> CompanyBrokerRepository
         {
             get
             {
-                if (this._companyCreatewRepository == null)
+                if (this._companyBrokerRepository == null)
                 {
-                    this._companyCreatewRepository = new GenericRepository<CompanyCreateModel>(_context);
+                    this._companyBrokerRepository = new GenericRepository<CompanyBrokerModel>(_context);
                 }
 
-                return _companyCreatewRepository;
+                return _companyBrokerRepository;
+            }
+        }
+
+        public ApartmentRepository CustomApartmentRepository
+        {
+            get
+            {
+                if (this._customApartmentRepository == null)
+                {
+                    this._customApartmentRepository = new ApartmentRepository(_context);
+                }
+
+                return _customApartmentRepository;
+            }
+        }
+
+        public CompanyRepository CustomCompanyRepository
+        {
+            get
+            {
+                if (this._customCompanyRepository == null)
+                {
+                    this._customCompanyRepository = new CompanyRepository(_context);
+                }
+
+                return _customCompanyRepository;
+            }
+        }
+
+        public BrokerRepository CustomBrokerRepository
+        {
+            get
+            {
+                if (this._customBrokerRepository == null)
+                {
+                    this._customBrokerRepository = new BrokerRepository(_context);
+                }
+
+                return _customBrokerRepository;
             }
         }
     }

@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NTBrokers.DAL;
-using NTBrokers.Repositories;
-using NTBrokers.Services;
+using NTBrokers.DAL.Repositories;
 
 namespace NTBrokers
 {
@@ -28,14 +21,10 @@ namespace NTBrokers
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<DapperContext>();
-            //services.AddTransient<IGenericRepository<T>, GenericRepository<T>>();
-            services.AddScoped<IBrokerRepository, BrokerRepository>();//todo
-
-            //services.AddScoped<ApartmentDBService>();
-            //services.AddScoped<CompanyDBService>();
-            //services.AddScoped<BrokerDBService>();
-            //services.AddScoped<MainService>();
-            //services.AddTransient<SqlConnection>(_ => new SqlConnection(Configuration["ConnectionStrings:Default"]));
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<ApartmentRepository>();
+            services.AddScoped<CompanyRepository>();
+            services.AddScoped<BrokerRepository>();
             services.AddControllersWithViews();
         }
 
@@ -63,7 +52,7 @@ namespace NTBrokers
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Apartment}/{action=Index}/{id?}");
             });
         }
     }

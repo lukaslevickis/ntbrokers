@@ -1,4 +1,4 @@
-﻿@model NTBrokers.Models.Apartments.ApartmentIndexModel
+﻿@model NTBrokers.Models.Apartments.ApartmentCreateModel
 
 <h5>Create new apartment</h5>
 
@@ -18,7 +18,7 @@
             @Html.TextBoxFor(x => x.Apartment.BuildingFloors)
             @Html.LabelFor(x => x.Apartment.Area)
             @Html.TextBoxFor(x => x.Apartment.Area)
-            @Html.DropDownListFor(x => x.Apartment.CompanyId, new SelectList(Model.Companies, "Id", "Name"))
+            @Html.DropDownListFor(x => x.Apartment.CompanyId, new SelectList(Model.Companies, "Id", "CompanyName"))
             <input type="submit" value="Submit" />
         </div>
     </div>

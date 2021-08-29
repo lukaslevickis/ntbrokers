@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using NTBrokers.DAL;
-using NTBrokers.Models;
 using NTBrokers.Models.Brokers;
 using NTBrokers.Models.Companies;
-using NTBrokers.Services;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -44,15 +39,19 @@ namespace NTBrokers.Controllers
 
         public IActionResult Submit(CompanyCreateModel model)
         {
-            BrokerModel broker = new();
-            _unitOfWork.CompanyCreateRepository.Create(model);
-            //_unitOfWork.CompanyRepository.Create(model.CreateFormSelectedBrokers);
-            return View("Index", _unitOfWork.CompanyRepository.GetAll(broker.TableName));
+            CompanyModel company = new();
+            _unitOfWork.CustomCompanyRepository.Create(model);
+            return View("Index", _unitOfWork.CompanyRepository.GetAll(company.TableName));
         }
 
-        //public IActionResult CompanyBrokers(int companyId)
-        //{
-        //    return View(_mainService._companyDBService.CompanyBrokers(companyId));
-        //}
+        public IActionResult CompanyBrokers(int companyId)
+        {
+            BrokerModel broker = new();
+            List<int> brokersIds = _unitOfWork.CompanyBrokerRepository.GetByID("CompanyId", companyId)
+                                                                      .Select(x => x.BrokerId).ToList();
+            
+            return View(_unitOfWork.BrokerRepository.GetAll(broker.TableName)
+                                                    .Where(x => brokersIds.Contains(x.Id)).ToList());
+        }
     }
 }

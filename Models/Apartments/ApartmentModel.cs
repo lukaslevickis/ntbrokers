@@ -9,11 +9,10 @@
         public int FlatFloor { get; set; }
         public int BuildingFloors { get; set; }
         public int Area { get; set; }
-        public int? BrokerId { get; set; }
+        public int? BrokerId { get; set; } = null;
         public int CompanyId { get; set; }
-
-        public string Apartment { get; set; }
-        public string Company { get; set; }
-        public string Broker { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string CompanyName { get; set; }
     }
 }

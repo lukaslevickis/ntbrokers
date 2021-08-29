@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
+using NTBrokers.Helpers;
 
-namespace NTBrokers.DAL
+namespace NTBrokers.DAL.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
@@ -13,6 +14,8 @@ namespace NTBrokers.DAL
         {
             _context = context;
         }
+
+        //public abstract void Create2(T model);
 
         public void Create(T model)
         {
@@ -35,19 +38,26 @@ namespace NTBrokers.DAL
             var query = $"INSERT INTO {properties.Last().GetValue(model)} ({string.Join(", ", colNames).Trim()}) " +
                         $"VALUES ({string.Join(", ", rowValues).Trim()})";
 
-            using (var connection = _context.CreateConnection())
-            {
-                connection.Execute(query);
-            }
+            ConnectionsHelpers.ExecuteQuery(query, _context);
         }
 
-        public List<T> GetAll(string tableName)
+        public List<T> GetAll(string tableName) //todo pass query to this method?
         {
             var query = $"SELECT * FROM dbo.{tableName}";
             using (var connection = _context.CreateConnection())
             {
-                var companies = connection.Query<T>(query);
-                return companies.ToList();
+                var items = connection.Query<T>(query);
+                return items.ToList();
+            }
+        }
+
+        public List<T> GetByID(string col, int id)//todo parameters and table name
+        {
+            var query = $"SELECT * FROM dbo.CompanyBroker WHERE {col} = {id}";
+            using (var connection = _context.CreateConnection())
+            {
+                var items = connection.Query<T>(query);
+                return items.ToList();
             }
         }
     }

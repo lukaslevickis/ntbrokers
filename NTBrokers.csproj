@@ -15,7 +15,6 @@
     <None Remove="Views\Apartment\" />
     <None Remove="Views\Broker\" />
     <None Remove="Views\Company\" />
-    <None Remove="Services\" />
     <None Remove="Microsoft.Data.SqlClient" />
     <None Remove="Models\Apartments\" />
     <None Remove="Models\Brokers\" />
@@ -23,19 +22,18 @@
     <None Remove="Helpers\" />
     <None Remove="Interfaces\" />
     <None Remove="Dapper" />
-    <None Remove="Context\" />
     <None Remove="DAL\" />
+    <None Remove="DAL\Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Apartment\" />
     <Folder Include="Views\Broker\" />
     <Folder Include="Views\Company\" />
-    <Folder Include="Services\" />
     <Folder Include="Models\Apartments\" />
     <Folder Include="Models\Brokers\" />
     <Folder Include="Models\Companies\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Context\" />
     <Folder Include="DAL\" />
+    <Folder Include="DAL\Repositories\" />
   </ItemGroup>
 </Project>

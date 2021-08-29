@@ -15,9 +15,9 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Apartment</td>
-                <td>@item.Company</td>
-                <td>@item.Broker</td>
+                <td>@item.Street @item.Address</td>
+                <td>@item.CompanyName</td>
+                <td>@item.Name @item.Surname</td>
             </tr>
         }
     </tbody>
