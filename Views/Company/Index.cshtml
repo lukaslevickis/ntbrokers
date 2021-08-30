@@ -16,7 +16,7 @@
             <tr>
                 <td>@Html.ActionLink($"{@item.CompanyName}", "CompanyBrokers", new { companyId = item.Id })</td>
                 <td>@item.Street @item.Address, @item.City</td>
-                <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id }) / <a asp-controller="Broker" asp-action="Create">Add broker</a></td>
+                <td>@Html.ActionLink("Edit company / Add/Rmove broker", "Edit", new { companyId = item.Id })</td>
             </tr>
         }
     </tbody>

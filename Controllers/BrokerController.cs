@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NTBrokers.DAL;
+using NTBrokers.Models;
 using NTBrokers.Models.Brokers;
 using NTBrokers.Models.Companies;
 
@@ -55,12 +56,12 @@ namespace NTBrokers.Controllers
 
         public IActionResult AddApartment(int brokerId)
         {
-            CompanyModel model = new();
-            List<int> companiesIds = _unitOfWork.CompanyBrokerRepository.GetByID("BrokerId", brokerId)
+            CompanyModel companyModel = new();
+            List<int> companiesIds = _unitOfWork.CompanyBrokerRepository.GetByID("CompanyBroker", "BrokerId", brokerId)
                                                                       .Select(x => x.CompanyId).ToList();
 
             List<string> brokerCompaniesNames = _unitOfWork.CompanyRepository
-                                                           .GetAll(model.TableName)
+                                                           .GetAll(companyModel.TableName)
                                                            .Where(company => companiesIds.Contains(company.Id)).ToList()
                                                            .Select(x => x.CompanyName).ToList();
 

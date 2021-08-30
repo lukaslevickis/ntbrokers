@@ -23,19 +23,17 @@ namespace NTBrokers.DAL.Repositories
 
             ConnectionsHelpers.ExecuteQuery(query, _context);
 
-            List<CompanyModel> id = GetById();
+            List<CompanyModel> id = GetIDs();
             int companyId = id.LastOrDefault().Id;
 
-            string query2 = "";
             foreach (string brokerId in model.CreateFormSelectedBrokers)
             {
-                query2 += $"INSERT into dbo.CompanyBroker (BrokerId, CompanyId) values ({brokerId}, {companyId});";
+                string query2 = $"INSERT into dbo.CompanyBroker (BrokerId, CompanyId) values ({brokerId}, {companyId});";
+                ConnectionsHelpers.ExecuteQuery(query2, _context);
             }
-
-            ConnectionsHelpers.ExecuteQuery(query2, _context);
         }
 
-        public List<CompanyModel> GetById()
+        public List<CompanyModel> GetIDs()
         {
             var query = "SELECT dbo.Company.ID from dbo.Company";
             using (var connection = _context.CreateConnection())
@@ -52,6 +50,49 @@ namespace NTBrokers.DAL.Repositories
             {
                 var items = connection.Query<int>(query);
                 return items.ToList();
+            }
+        }
+
+        public void UpdateCompany(CompanyCreateModel model)
+        {
+            string query = $"UPDATE dbo.Company SET CompanyName = '{model.Company.CompanyName}', City = '{model.Company.City}', " +
+                           $"Street = '{model.Company.Street}', Address = '{model.Company.Address}' " +
+                           $"WHERE dbo.Company.ID = {model.Company.Id}";
+
+            ConnectionsHelpers.ExecuteQuery(query, _context);
+        }
+
+        public void UpdateRemoveCompanyBrokers(CompanyCreateModel model, List<string> existingBrokers)
+        {
+            List<string> brokersToRemove = null;
+            List<string> brokersToAdd = null;
+            List<string> selectedBrokers = model?.CreateFormSelectedBrokers?.ToList();
+            if (selectedBrokers == null)
+            {
+                brokersToRemove = existingBrokers;
+            }
+            else
+            {
+                brokersToRemove = existingBrokers.Where(x => !selectedBrokers.Contains(x))?.ToList();
+                brokersToAdd = selectedBrokers.Where(x => !existingBrokers.Contains(x)).ToList();
+            }
+
+            if (brokersToAdd != null)
+            {
+                foreach (string brokerId in brokersToAdd)//todo dublication in create method
+                {
+                    string query = $"INSERT into dbo.CompanyBroker (BrokerId, CompanyId) values ({brokerId}, {model.Company.Id});";
+                    ConnectionsHelpers.ExecuteQuery(query, _context);
+                }
+            }
+
+            if (brokersToRemove != null)
+            {
+                foreach (string brokerId in brokersToRemove)
+                {
+                    string query = $"DELETE FROM dbo.CompanyBroker WHERE BrokerId = {brokerId} AND CompanyId = {model.Company.Id}";
+                    ConnectionsHelpers.ExecuteQuery(query, _context);
+                }
             }
         }
     }

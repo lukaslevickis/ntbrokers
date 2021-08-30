@@ -14,11 +14,11 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>@item.Street @item.Address</td>
-                <td>@item.CompanyName</td>
-                <td>@item.Name @item.Surname</td>
-            </tr>
+        <tr>
+            <td>@item.Street @item.Address</td>
+            <td>@Html.ActionLink($"{@item.CompanyName}", "CompanyBrokers", "Company", new { companyId = item.CompanyId })</td>
+            <td>@Html.ActionLink($"{@item.Name}" + $" {@item.Surname}", "BrokerApartments", "Broker", new { brokerId = item.BrokerId })</td>
+        </tr>
         }
     </tbody>
 </table>

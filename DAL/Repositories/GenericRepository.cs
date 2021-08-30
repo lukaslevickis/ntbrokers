@@ -15,8 +15,6 @@ namespace NTBrokers.DAL.Repositories
             _context = context;
         }
 
-        //public abstract void Create2(T model);
-
         public void Create(T model)
         {
             List<string> colNames = new();
@@ -32,7 +30,7 @@ namespace NTBrokers.DAL.Repositories
                 }
 
                 colNames.Add(prop.Name);
-                rowValues.Add("@" + prop.GetValue(model).ToString());
+                rowValues.Add("'" + prop.GetValue(model).ToString() + "'");
             }
 
             var query = $"INSERT INTO {properties.Last().GetValue(model)} ({string.Join(", ", colNames).Trim()}) " +
@@ -51,9 +49,9 @@ namespace NTBrokers.DAL.Repositories
             }
         }
 
-        public List<T> GetByID(string col, int id)//todo parameters and table name
+        public List<T> GetByID(string tableName, string col, int id)//todo parameters
         {
-            var query = $"SELECT * FROM dbo.CompanyBroker WHERE {col} = {id}";
+            var query = $"SELECT * FROM dbo.{tableName} WHERE {col} = {id}";
             using (var connection = _context.CreateConnection())
             {
                 var items = connection.Query<T>(query);
