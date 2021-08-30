@@ -49,9 +49,14 @@ namespace NTBrokers.Controllers
             BrokerModel broker = new();
             List<int> brokersIds = _unitOfWork.CompanyBrokerRepository.GetByID("CompanyBroker", "CompanyId", companyId)
                                                                       .Select(x => x.BrokerId).ToList();
-            
-            return View(_unitOfWork.BrokerRepository.GetAll(broker.TableName)
-                                                    .Where(x => brokersIds.Contains(x.Id)).ToList());
+
+            CompanyBrokersModel data = new();
+            data.CompanyName = _unitOfWork.CompanyRepository.GetByID("Company", "ID", companyId)
+                                                            .Select(x => x.CompanyName).FirstOrDefault();
+
+            data.Brokers = _unitOfWork.BrokerRepository.GetAll(broker.TableName)
+                                                       .Where(x => brokersIds.Contains(x.Id)).ToList();
+            return View(data);
         }
 
         public IActionResult Edit(int companyId)
@@ -83,6 +88,15 @@ namespace NTBrokers.Controllers
 
             _unitOfWork.CustomCompanyRepository.UpdateRemoveCompanyBrokers(model, existingBrokers);
             return View("Index", _unitOfWork.CompanyRepository.GetAll(company.TableName));
+        }
+
+        [HttpPost]
+        public IActionResult SortBy(CompanyBrokersModel model, string companyName)
+        {
+            CompanyBrokersModel data = new();
+            data.Brokers = _unitOfWork.BrokerRepository.SortBy(model.FilterSort.SortOrder);
+            data.CompanyName = companyName;
+            return View("CompanyBrokers", data);
         }
     }
 }

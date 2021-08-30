@@ -8,5 +8,6 @@ namespace NTBrokers.DAL.Repositories
         List<T> GetAll(string tableName);
         void Create(T model);
         List<T> GetByID(string tableName, string col, int id);
+        List<T> SortBy(string col);
     }
 }

@@ -58,5 +58,15 @@ namespace NTBrokers.DAL.Repositories
                 return items.ToList();
             }
         }
+
+        public List<T> SortBy(string col)
+        {
+            var query = $"SELECT * from dbo.Broker order by {col}";
+            using (var connection = _context.CreateConnection())
+            {
+                var items = connection.Query<T>(query);
+                return items.ToList();
+            }
+        }
     }
 }
