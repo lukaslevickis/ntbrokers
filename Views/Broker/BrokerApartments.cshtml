@@ -1,8 +1,18 @@
-﻿@model NTBrokers.Models.Brokers.BrokerApartmentModel
+﻿@model NTBrokers.Models.Brokers.BrokerApartmentsModel
 
 @Html.ActionLink("Add apartment", "AddApartment", new { brokerId = Model.Broker.Id })
 
 <h3>List of @Model.Broker.Name @Model.Broker.Surname apartments</h3>
+
+@using (Html.BeginForm("Filter", "Broker", new { brokerId = Model.Broker.Id, broker = Model.Broker.Name + " " + Model.Broker.Surname }, FormMethod.Post))
+{
+    <div class="container-full" style="background-color:aliceblue">
+        <div class="container">
+            @Html.DropDownListFor(x => Model.FilterSort.FilterCity, new SelectList(Model.SelectApartments))
+            <input type="submit" value="Filter" />
+        </div>
+    </div>
+}
 
 <table class="table">
     <thead>
