@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NTBrokers.Models.Companies;
 
 namespace NTBrokers.Models.Apartments
@@ -7,6 +8,6 @@ namespace NTBrokers.Models.Apartments
     public class ApartmentCreateModel
     {
         public ApartmentModel Apartment { get; set; } = new ApartmentModel();
-        public List<CompanyModel> Companies { get; set; } = new List<CompanyModel>();
+        public IQueryable<CompanyModel> Companies { get; set; }// = new IQueryable<CompanyModel>();
     }
 }

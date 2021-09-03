@@ -13,7 +13,7 @@ namespace NTBrokers.Controllers
     {
         private UnitOfWork _unitOfWork;
 
-        public CompanyController(DapperContext context)
+        public CompanyController(ApplicationDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
         }
@@ -22,7 +22,7 @@ namespace NTBrokers.Controllers
         public IActionResult Index()
         {
             CompanyModel company = new();
-            return View(_unitOfWork.CompanyRepository.GetAll(company.TableName));
+            return View(_unitOfWork.CompanyRepository.GetAll());
         }
 
         public IActionResult Create()
@@ -30,7 +30,7 @@ namespace NTBrokers.Controllers
             BrokerModel broker = new();
             CompanyCreateModel data = new CompanyCreateModel()
             {
-                Brokers = _unitOfWork.BrokerRepository.GetAll(broker.TableName),
+                //Brokers = _unitOfWork.BrokerRepository.GetAll(),
                 Company = new CompanyModel()
             };
 
@@ -41,7 +41,7 @@ namespace NTBrokers.Controllers
         {
             CompanyModel company = new();
             _unitOfWork.CustomCompanyRepository.Create(model);
-            return View("Index", _unitOfWork.CompanyRepository.GetAll(company.TableName));
+            return View("Index", _unitOfWork.CompanyRepository.GetAll());
         }
 
         public IActionResult CompanyBrokers(int companyId)
@@ -54,8 +54,8 @@ namespace NTBrokers.Controllers
             data.CompanyName = _unitOfWork.CompanyRepository.GetByID("Company", "ID", companyId)
                                                             .Select(x => x.CompanyName).FirstOrDefault();
 
-            data.Brokers = _unitOfWork.BrokerRepository.GetAll(broker.TableName)
-                                                       .Where(x => brokersIds.Contains(x.Id)).ToList();
+            //data.Brokers = _unitOfWork.BrokerRepository.GetAll()
+            //                                           .Where(x => brokersIds.Contains(x.Id)).ToList();
             return View(data);
         }
 
@@ -65,15 +65,15 @@ namespace NTBrokers.Controllers
             List<int> brokersIds = _unitOfWork.CompanyBrokerRepository.GetByID("CompanyBroker", "CompanyId", companyId)
                                                                       .Select(x => x.BrokerId).ToList();
 
-            List<BrokerModel> brokers = _unitOfWork.BrokerRepository.GetAll(broker.TableName);
-            CompanyModel company = _unitOfWork.CompanyRepository.GetByID("Company", "ID", companyId).ToList().FirstOrDefault();
+            //IQueryable<BrokerModel> brokers = _unitOfWork.BrokerRepository.GetAll();
+            CompanyModel company = null;// _unitOfWork.CompanyRepository.GetByID("Company", "ID", companyId).ToList().FirstOrDefault();
             company.Id = companyId;
 
             CompanyCreateModel data = new CompanyCreateModel()
             {
-                Brokers = brokers,
-                SelectedBrokers = brokers.Where(x => brokersIds.Contains(x.Id)).ToList(),
-                Company = _unitOfWork.CompanyRepository.GetByID("Company", "ID", companyId).ToList().FirstOrDefault()
+                //Brokers = brokers,
+                //SelectedBrokers = brokers.Where(x => brokersIds.Contains(x.Id)).ToList(),
+                //Company = _unitOfWork.CompanyRepository.GetByID("Company", "ID", companyId).ToList().FirstOrDefault()
             };
 
             return View(data);
@@ -87,14 +87,14 @@ namespace NTBrokers.Controllers
                                                                       .Select(x => x.BrokerId.ToString()).ToList();
 
             _unitOfWork.CustomCompanyRepository.UpdateRemoveCompanyBrokers(model, existingBrokers);
-            return View("Index", _unitOfWork.CompanyRepository.GetAll(company.TableName));
+            return View("Index", _unitOfWork.CompanyRepository.GetAll());
         }
 
         [HttpPost]
         public IActionResult SortBy(CompanyBrokersModel model, string companyName)
         {
             CompanyBrokersModel data = new();
-            data.Brokers = _unitOfWork.BrokerRepository.SortBy(model.FilterSort.SortOrder);
+            //data.Brokers = _unitOfWork.BrokerRepository.SortBy(model.FilterSort.SortOrder);
             data.CompanyName = companyName;
             return View("CompanyBrokers", data);
         }

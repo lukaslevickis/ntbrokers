@@ -11,7 +11,7 @@ namespace NTBrokers.Controllers
     {
         private UnitOfWork _unitOfWork;
 
-        public ApartmentController(DapperContext context)
+        public ApartmentController(ApplicationDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
         }
@@ -28,7 +28,7 @@ namespace NTBrokers.Controllers
             var aa = new ApartmentCreateModel
             {
                 Apartment = new ApartmentModel(),
-                Companies = _unitOfWork.CompanyRepository.GetAll(company.TableName)
+                //Companies = _unitOfWork.CompanyRepository.GetAll()
             };
 
             return View(aa);

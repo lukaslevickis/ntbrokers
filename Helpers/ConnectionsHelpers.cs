@@ -7,12 +7,12 @@ namespace NTBrokers.Helpers
 {
     public static class ConnectionsHelpers
     {
-        public static void ExecuteQuery(string query, DapperContext context)
+        public static void ExecuteQuery(string query, ApplicationDbContext context)
         {
-            using (var connection = context.CreateConnection())
-            {
-                connection.Execute(query);
-            }
+            //using (var connection = context.CreateConnection())
+            //{
+            //    connection.Execute(query);
+            //}
         }
     }
 }

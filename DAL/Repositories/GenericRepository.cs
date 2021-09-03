@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using NTBrokers.Helpers;
 
 namespace NTBrokers.DAL.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DapperContext _context;
+        private readonly ApplicationDbContext _context;
+        private readonly DbSet<T> dbSet;
 
-        public GenericRepository(DapperContext context)
+        public GenericRepository(ApplicationDbContext context)
         {
             _context = context;
+            this.dbSet = context.Set<T>();
         }
 
         public void Create(T model)
@@ -39,34 +42,32 @@ namespace NTBrokers.DAL.Repositories
             ConnectionsHelpers.ExecuteQuery(query, _context);
         }
 
-        public List<T> GetAll(string tableName) //todo pass query to this method?
+        public IQueryable<T> GetAll()
         {
-            var query = $"SELECT * FROM dbo.{tableName}";
-            using (var connection = _context.CreateConnection())
-            {
-                var items = connection.Query<T>(query);
-                return items.ToList();
-            }
+            return dbSet;
         }
 
         public List<T> GetByID(string tableName, string col, int id)//todo parameters
         {
             var query = $"SELECT * FROM dbo.{tableName} WHERE {col} = {id}";
-            using (var connection = _context.CreateConnection())
-            {
-                var items = connection.Query<T>(query);
-                return items.ToList();
-            }
+            //using (var connection = _context.CreateConnection())
+            //{
+            //    var items = connection.Query<T>(query);
+            //    return items.ToList();
+            //}
+
+            throw new NotImplementedException();
         }
 
         public List<T> SortBy(string col)
         {
             var query = $"SELECT * from dbo.Broker order by {col}";
-            using (var connection = _context.CreateConnection())
-            {
-                var items = connection.Query<T>(query);
-                return items.ToList();
-            }
+            //using (var connection = _context.CreateConnection())
+            //{
+            //    var items = connection.Query<T>(query);
+            //    return items.ToList();
+            //}
+            throw new NotImplementedException();
         }
     }
 }

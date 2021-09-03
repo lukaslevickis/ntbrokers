@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +21,7 @@ namespace NTBrokers
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<DapperContext>();
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:Default2"]));
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ApartmentRepository>();
             services.AddScoped<CompanyRepository>();
@@ -52,7 +53,7 @@ namespace NTBrokers
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Apartment}/{action=Index}/{id?}");
+                    pattern: "{controller=Broker}/{action=Index}/{id?}");
             });
         }
     }

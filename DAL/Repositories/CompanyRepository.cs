@@ -9,9 +9,9 @@ namespace NTBrokers.DAL.Repositories
 {
     public class CompanyRepository
     {
-        private readonly DapperContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public CompanyRepository(DapperContext context)
+        public CompanyRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -36,21 +36,24 @@ namespace NTBrokers.DAL.Repositories
         public List<CompanyModel> GetIDs()
         {
             var query = "SELECT dbo.Company.ID from dbo.Company";
-            using (var connection = _context.CreateConnection())
-            {
-                var items = connection.Query<CompanyModel>(query);
-                return items.ToList();
-            }
+            //using (var connection = _context.CreateConnection())
+            //{
+            //    var items = connection.Query<CompanyModel>(query);
+            //    return items.ToList();
+            //}
+            throw new NotImplementedException();
         }
 
         public List<int> CompanyBrokersIdsById(int companyId)
         {
             var query = $"SELECT * FROM dbo.CompanyBroker WHERE CompanyId = {companyId}";
-            using (var connection = _context.CreateConnection())
-            {
-                var items = connection.Query<int>(query);
-                return items.ToList();
-            }
+            //using (var connection = _context.CreateConnection())
+            //{
+            //    var items = connection.Query<int>(query);
+            //    return items.ToList();
+            //}
+
+            throw new NotImplementedException();
         }
 
         public void UpdateCompany(CompanyCreateModel model)
