@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dapper;
-using NTBrokers.Helpers;
+﻿using System.Linq;
+using NTBrokers.DAL.Entities;
 using NTBrokers.Models.Apartments;
 
 namespace NTBrokers.DAL.Repositories
@@ -14,6 +11,16 @@ namespace NTBrokers.DAL.Repositories
         public ApartmentRepository(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public void InsertApartment(Apartment apartment)
+        {
+            _context.Apartments.Add(apartment);
+        }
+
+        public void Save()
+        {
+            _context.SaveChanges();
         }
 
         public IQueryable<ApartmentModel> GetAll()
@@ -41,19 +48,6 @@ namespace NTBrokers.DAL.Repositories
                         };
 
             return result;
-        }
-
-
-
-        public void Create(ApartmentModel model)
-        {
-            string query = $"INSERT INTO dbo.House (City, Street, Address, FlatFloor, " +
-                                               $"BuildingFloors, Area, BrokerId, CompanyId) " +
-                                               $"values ('{model.City}', '{model.Street}', '{model.Address}'," +
-                                               $"'{model.FlatFloor}', '{model.BuildingFloors}', '{model.Area}'," +
-                                               $"null, '{model.CompanyId}');";
-
-            ConnectionsHelpers.ExecuteQuery(query, _context);
         }
     }
 }

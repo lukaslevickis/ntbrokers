@@ -24,7 +24,6 @@
     <None Remove="Models\Apartments\" />
     <None Remove="Models\Brokers\" />
     <None Remove="Models\Companies\" />
-    <None Remove="Helpers\" />
     <None Remove="Interfaces\" />
     <None Remove="Dapper" />
     <None Remove="DAL\" />
@@ -32,6 +31,7 @@
     <None Remove="Microsoft.EntityFrameworkCore.SqlServer" />
     <None Remove="DAL\Entities\" />
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
+    <None Remove="Services\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Apartment\" />
@@ -40,9 +40,9 @@
     <Folder Include="Models\Apartments\" />
     <Folder Include="Models\Brokers\" />
     <Folder Include="Models\Companies\" />
-    <Folder Include="Helpers\" />
     <Folder Include="DAL\" />
     <Folder Include="DAL\Repositories\" />
     <Folder Include="DAL\Entities\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>

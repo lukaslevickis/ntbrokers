@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Dapper;
-using NTBrokers.DAL.Entities;
-using NTBrokers.Helpers;
-using NTBrokers.Models.Apartments;
-using NTBrokers.Models.Brokers;
+﻿using NTBrokers.DAL.Entities;
 
 namespace NTBrokers.DAL.Repositories
 {
@@ -15,13 +9,6 @@ namespace NTBrokers.DAL.Repositories
         public BrokerRepository(ApplicationDbContext context)
         {
             _context = context;
-        }
-
-        public void SubmitApartment(int brokerId, int apartmentId)
-        {
-            string query = $"update dbo.House set BrokerId = {brokerId} WHERE ID = {apartmentId};";
-
-            ConnectionsHelpers.ExecuteQuery(query, _context);
         }
 
         public void InsertBroker(Broker broker)

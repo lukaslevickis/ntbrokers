@@ -3,10 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NTBrokers.DAL;
 using NTBrokers.DAL.Entities;
-using NTBrokers.Models;
-using NTBrokers.Models.Apartments;
 using NTBrokers.Models.Brokers;
-using NTBrokers.Models.Companies;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -43,7 +40,7 @@ namespace NTBrokers.Controllers
 
         public IActionResult BrokerApartments(int brokerId)
         {
-            List<ApartmentModel> apartments = _unitOfWork.CustomApartmentRepository.GetAll().Where(x => x.BrokerId == brokerId).ToList();
+            IQueryable<Apartment> apartments = _unitOfWork.ApartmentRepository.GetAll().Where(x => x.BrokerId == brokerId);
             BrokerApartmentsModel data = new()
             {
                 Broker = _unitOfWork.BrokerRepository.GetAll().Where(x => x.BrokerId == brokerId).FirstOrDefault(),
@@ -56,7 +53,6 @@ namespace NTBrokers.Controllers
 
         public IActionResult AddApartment(int brokerId)
         {
-            CompanyModel companyModel = new();
             List<int> companiesIds = _unitOfWork.CompanyBrokerRepository.GetAll()
                                                                       .Select(x => x.CompanyId).ToList();
 
@@ -65,7 +61,7 @@ namespace NTBrokers.Controllers
                                                            .Where(company => companiesIds.Contains(company.CompanyId)).ToList()
                                                            .Select(x => x.CompanyName).ToList();
 
-            BrokerApartmentsModel data = new ()
+            AddApartmentModel data = new ()
             {
                 BrokerId = brokerId,
                 Apartments = _unitOfWork.CustomApartmentRepository
@@ -78,31 +74,34 @@ namespace NTBrokers.Controllers
 
         public IActionResult SubmitApartment(int brokerId, int apartmentId)
         {
-            BrokerModel broker = new();
-            _unitOfWork.CustomBrokerRepository.SubmitApartment(brokerId, apartmentId);
+            IQueryable<Apartment> apartments = _unitOfWork.ApartmentRepository.GetAll();
+            Apartment apartment = apartments.Where(x => x.Id == apartmentId).FirstOrDefault();
+            apartment.BrokerId = brokerId;
+            _unitOfWork.ApartmentRepository.Update(apartment);
+            _unitOfWork.ApartmentRepository.Save();
             BrokerApartmentsModel data = new()
             {
                 Broker = _unitOfWork.BrokerRepository.GetAll().Where(x => x.BrokerId == brokerId).FirstOrDefault(),
-                Apartments = _unitOfWork.CustomApartmentRepository.GetAll().Where(x => x.BrokerId == brokerId).ToList()
+                Apartments = _unitOfWork.ApartmentRepository.GetAll().Where(x => x.BrokerId == brokerId),
+                SelectApartments = apartments.Select(x => x.City).Distinct().ToList()
             };
 
             return View("BrokerApartments", data);
         }
 
-        //[HttpPost]
-        //public IActionResult Filter(BrokerApartmentsModel model, int brokerId, string broker)
-        //{
-        //    BrokerModel brokerModel = new();
-        //    List<ApartmentModel> apartments = _unitOfWork.CustomApartmentRepository.GetAll().Where(x => x.BrokerId == brokerId).ToList();
-        //    BrokerApartmentsModel data = new()
-        //    {
-        //        Broker = _unitOfWork.BrokerRepository.GetAll().Where(x => x.Id == brokerId).FirstOrDefault(),
-        //        Apartments = apartments.Where(x => x.City.Contains(model.FilterSort.FilterCity)).ToList(),
-        //        SelectApartments = apartments.Select(x => x.City).Distinct().ToList(),
-        //        BrokerName = broker
-        //    };
+        [HttpPost]
+        public IActionResult Filter(BrokerApartmentsModel model, int brokerId, string broker)
+        {
+            IQueryable<Apartment> apartments = _unitOfWork.ApartmentRepository.GetAll().Where(x => x.BrokerId == brokerId);
+            BrokerApartmentsModel data = new()
+            {
+                Broker = _unitOfWork.BrokerRepository.GetAll().Where(x => x.BrokerId == brokerId).FirstOrDefault(),
+                Apartments = apartments.Where(x => x.City.Contains(model.FilterSort.FilterCity)),
+                SelectApartments = apartments.Select(x => x.City).Distinct().ToList(),
+                BrokerName = broker
+            };
 
-        //    return View("BrokerApartments", data);
-        //}
+            return View("BrokerApartments", data);
+        }
     }
 }
