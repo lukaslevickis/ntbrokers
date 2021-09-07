@@ -1,72 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dapper;
-using NTBrokers.Helpers;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace NTBrokers.DAL.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        private readonly DapperContext _context;
+        private readonly ApplicationDbContext _context;
+        private readonly DbSet<TEntity> dbSet;
 
-        public GenericRepository(DapperContext context)
+        public GenericRepository(ApplicationDbContext context)
         {
             _context = context;
+            this.dbSet = context.Set<TEntity>();
         }
 
-        public void Create(T model)
+        public IQueryable<TEntity> GetAll()
         {
-            List<string> colNames = new();
-            List<string> rowValues = new();
-
-            Type t = model.GetType();
-            var properties = t.GetProperties();
-            foreach (var prop in properties.Skip(1))
-            {
-                if (prop.Name == "TableName")
-                {
-                    continue;
-                }
-
-                colNames.Add(prop.Name);
-                rowValues.Add("'" + prop.GetValue(model).ToString() + "'");
-            }
-
-            var query = $"INSERT INTO {properties.Last().GetValue(model)} ({string.Join(", ", colNames).Trim()}) " +
-                        $"VALUES ({string.Join(", ", rowValues).Trim()})";
-
-            ConnectionsHelpers.ExecuteQuery(query, _context);
+            return dbSet;
         }
 
-        public List<T> GetAll(string tableName) //todo pass query to this method?
+        public void Save()
         {
-            var query = $"SELECT * FROM dbo.{tableName}";
-            using (var connection = _context.CreateConnection())
-            {
-                var items = connection.Query<T>(query);
-                return items.ToList();
-            }
+            _context.SaveChanges();
         }
 
-        public List<T> GetByID(string tableName, string col, int id)//todo parameters
+        public virtual TEntity GetByID(object id)
         {
-            var query = $"SELECT * FROM dbo.{tableName} WHERE {col} = {id}";
-            using (var connection = _context.CreateConnection())
-            {
-                var items = connection.Query<T>(query);
-                return items.ToList();
-            }
+            return dbSet.Find(id);
         }
 
-        public List<T> SortBy(string col)
+        public virtual void Update(TEntity entityToUpdate)
         {
-            var query = $"SELECT * from dbo.Broker order by {col}";
-            using (var connection = _context.CreateConnection())
-            {
-                var items = connection.Query<T>(query);
-                return items.ToList();
-            }
+            dbSet.Attach(entityToUpdate);
+            _context.Entry(entityToUpdate).State = EntityState.Modified;
+        }
+
+        public virtual void Delete(object id)
+        {
+            TEntity entityToDelete = dbSet.Find(id);
+            Delete(entityToDelete);
         }
     }
 }

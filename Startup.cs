@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NTBrokers.DAL;
 using NTBrokers.DAL.Repositories;
+using NTBrokers.Services;
 
 namespace NTBrokers
 {
@@ -20,11 +22,12 @@ namespace NTBrokers
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<DapperContext>();
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:Default"]));
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ApartmentRepository>();
             services.AddScoped<CompanyRepository>();
             services.AddScoped<BrokerRepository>();
+            services.AddScoped<CompanyBrokerService>();
             services.AddControllersWithViews();
         }
 

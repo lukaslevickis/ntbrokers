@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NTBrokers.DAL;
+using NTBrokers.DAL.Entities;
 using NTBrokers.Models.Apartments;
-using NTBrokers.Models.Companies;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,7 +11,7 @@ namespace NTBrokers.Controllers
     {
         private UnitOfWork _unitOfWork;
 
-        public ApartmentController(DapperContext context)
+        public ApartmentController(ApplicationDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
         }
@@ -24,19 +24,19 @@ namespace NTBrokers.Controllers
 
         public IActionResult Create()
         {
-            CompanyModel company = new();
-            var aa = new ApartmentCreateModel
+            ApartmentCreateModel data = new()
             {
-                Apartment = new ApartmentModel(),
-                Companies = _unitOfWork.CompanyRepository.GetAll(company.TableName)
+                Apartment = new Apartment(),
+                Companies = _unitOfWork.CompanyRepository.GetAll()
             };
 
-            return View(aa);
+            return View(data);
         }
 
         public IActionResult Submit(ApartmentCreateModel model)
         {
-            _unitOfWork.CustomApartmentRepository.Create(model.Apartment);
+            _unitOfWork.CustomApartmentRepository.InsertApartment(model.Apartment);
+            _unitOfWork.CustomBrokerRepository.Save();
             return View("Index", _unitOfWork.CustomApartmentRepository.GetAll());
         }
     }

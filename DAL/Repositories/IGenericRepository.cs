@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Linq;
 
 namespace NTBrokers.DAL.Repositories
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<TEntity> where TEntity : class
     {
-        List<T> GetAll(string tableName);
-        void Create(T model);
-        List<T> GetByID(string tableName, string col, int id);
-        List<T> SortBy(string col);
+        IQueryable<TEntity> GetAll();
+        TEntity GetByID(object id);
+        void Update(TEntity entity);
+        void Delete(object id);
     }
 }

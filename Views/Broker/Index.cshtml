@@ -1,4 +1,4 @@
-﻿@model List<NTBrokers.Models.Brokers.BrokerModel>
+﻿@model IQueryable<NTBrokers.DAL.Entities.Broker>
 
 <a asp-controller="Broker"
    asp-action="Create">Add broker</a>
@@ -17,7 +17,7 @@
             <tr>
                 <td>@item.Name</td>
                 <td>@item.Surname</td>
-                <td>@Html.ActionLink("Apartments", "BrokerApartments", new { brokerId = item.Id })</td>
+                <td>@Html.ActionLink("Apartments", "BrokerApartments", new { brokerId = item.BrokerId })</td>
             </tr>
         }
     </tbody>

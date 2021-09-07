@@ -1,74 +1,71 @@
-﻿using System;
+﻿using NTBrokers.DAL.Entities;
 using NTBrokers.DAL.Repositories;
-using NTBrokers.Models;
-using NTBrokers.Models.Apartments;
-using NTBrokers.Models.Brokers;
-using NTBrokers.Models.Companies;
 
 namespace NTBrokers.DAL
 {
     public class UnitOfWork
     {
-        private DapperContext _context;
-        private GenericRepository<ApartmentModel> _apartmentRepository;
-        private GenericRepository<BrokerModel> _brokerRepository;
-        private GenericRepository<CompanyModel> _companyRepository;
-        private GenericRepository<CompanyBrokerModel> _companyBrokerRepository;
+        private readonly ApplicationDbContext _context;
+        private GenericRepository<Apartment> _apartmentRepository;
+        private GenericRepository<Broker> _brokerRepository;
+        private GenericRepository<Company> _companyRepository;
+        private GenericRepository<CompanyBroker> _companyBrokerRepository;
         private CompanyRepository _customCompanyRepository;
         private ApartmentRepository _customApartmentRepository;
         private BrokerRepository _customBrokerRepository;
+        private CompanyBrokerRepository _customCompanyBrokerRepository;
 
-        public UnitOfWork(DapperContext context)
+        public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public GenericRepository<ApartmentModel> ApartmentRepository
+        public GenericRepository<Apartment> ApartmentRepository
         {
             get
             {
                 if (this._apartmentRepository == null)
                 {
-                    this._apartmentRepository = new GenericRepository<ApartmentModel>(_context);
+                    this._apartmentRepository = new GenericRepository<Apartment>(_context);
                 }
 
                 return _apartmentRepository;
             }
         }
 
-        public GenericRepository<BrokerModel> BrokerRepository
+        public GenericRepository<Broker> BrokerRepository
         {
             get
             {
                 if (this._brokerRepository == null)
                 {
-                    this._brokerRepository = new GenericRepository<BrokerModel>(_context);
+                    this._brokerRepository = new GenericRepository<Broker>(_context);
                 }
 
                 return _brokerRepository;
             }
         }
 
-        public GenericRepository<CompanyModel> CompanyRepository
+        public GenericRepository<Company> CompanyRepository
         {
             get
             {
                 if (this._companyRepository == null)
                 {
-                    this._companyRepository = new GenericRepository<CompanyModel>(_context);
+                    this._companyRepository = new GenericRepository<Company>(_context);
                 }
 
                 return _companyRepository;
             }
         }
 
-        public GenericRepository<CompanyBrokerModel> CompanyBrokerRepository
+        public GenericRepository<CompanyBroker> CompanyBrokerRepository
         {
             get
             {
                 if (this._companyBrokerRepository == null)
                 {
-                    this._companyBrokerRepository = new GenericRepository<CompanyBrokerModel>(_context);
+                    this._companyBrokerRepository = new GenericRepository<CompanyBroker>(_context);
                 }
 
                 return _companyBrokerRepository;
@@ -111,6 +108,19 @@ namespace NTBrokers.DAL
                 }
 
                 return _customBrokerRepository;
+            }
+        }
+
+        public CompanyBrokerRepository CustomCompanyBrokerRepository
+        {
+            get
+            {
+                if (this._customCompanyBrokerRepository == null)
+                {
+                    this._customCompanyBrokerRepository = new CompanyBrokerRepository(_context);
+                }
+
+                return _customCompanyBrokerRepository;
             }
         }
     }

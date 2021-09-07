@@ -4,14 +4,14 @@
 
 @foreach (var broker in Model.Brokers)
 {
-    Model.CreateFormBrokers.Add(new SelectListItem { Value = broker.Id.ToString(), Text = broker.Name + " " + broker.Surname });
+    Model.CreateFormBrokers.Add(new SelectListItem { Value = broker.BrokerId.ToString(), Text = broker.Name + " " + broker.Surname });
 }
 
 @foreach (var selectedBroker in Model.SelectedBrokers)
 {
     foreach (var item in Model.CreateFormBrokers)
     {
-        if (item.Value == selectedBroker.Id.ToString())
+        if (item.Value == selectedBroker.BrokerId.ToString())
         {
             item.Selected = true;
         }
@@ -22,7 +22,7 @@
 {
     <div class="container-full" style="background-color:aliceblue">
         <div class="container">
-            @Html.HiddenFor(x => x.Company.Id)
+            @Html.HiddenFor(x => x.Company.CompanyId)
             @Html.LabelFor(x => x.Company.CompanyName)
             @Html.TextBoxFor(x => x.Company.CompanyName)
             @Html.LabelFor(x => x.Company.City)

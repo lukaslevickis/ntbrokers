@@ -4,7 +4,7 @@
 
 @foreach (var item in Model.Brokers)
 {
-    Model.CreateFormBrokers.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.Name + " " + item.Surname });
+    Model.CreateFormBrokers.Add(new SelectListItem { Value = item.BrokerId.ToString(), Text = item.Name + " " + item.Surname });
 }
 
 @using (Html.BeginForm("Submit", "Company", FormMethod.Post))
