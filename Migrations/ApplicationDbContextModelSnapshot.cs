@@ -130,13 +130,13 @@ namespace NTBrokers.Migrations
                     b.HasOne("NTBrokers.DAL.Entities.Broker", "Broker")
                         .WithMany("Companies")
                         .HasForeignKey("BrokerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("NTBrokers.DAL.Entities.Company", "Company")
                         .WithMany("Brokers")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Broker");

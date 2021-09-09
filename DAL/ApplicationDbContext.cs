@@ -23,13 +23,11 @@ namespace NTBrokers.DAL
             modelBuilder.Entity<CompanyBroker>()
                 .HasOne(bc => bc.Company)
                 .WithMany(b => b.Brokers)
-                .HasForeignKey(bc => bc.CompanyId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(bc => bc.CompanyId);
             modelBuilder.Entity<CompanyBroker>()
                 .HasOne(bc => bc.Broker)
                 .WithMany(c => c.Companies)
-                .HasForeignKey(bc => bc.BrokerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(bc => bc.BrokerId);
         }
     }
 }

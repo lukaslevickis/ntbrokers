@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NTBrokers.DAL;
-using NTBrokers.DAL.Entities;
 using NTBrokers.Models.Apartments;
+using NTBrokers.Services;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,35 +8,28 @@ namespace NTBrokers.Controllers
 {
     public class ApartmentController : Controller
     {
-        private UnitOfWork _unitOfWork;
+        private ApartmentService _apartmentService;
 
-        public ApartmentController(ApplicationDbContext context)
+        public ApartmentController(ApartmentService apartmentService)
         {
-            _unitOfWork = new UnitOfWork(context);
+            _apartmentService = apartmentService;
         }
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            return View(_unitOfWork.CustomApartmentRepository.GetAll());
+            return View(_apartmentService.GetAll());
         }
 
         public IActionResult Create()
         {
-            ApartmentCreateModel data = new()
-            {
-                Apartment = new Apartment(),
-                Companies = _unitOfWork.CompanyRepository.GetAll()
-            };
-
-            return View(data);
+            return View(_apartmentService.Create());
         }
 
         public IActionResult Submit(ApartmentCreateModel model)
         {
-            _unitOfWork.CustomApartmentRepository.InsertApartment(model.Apartment);
-            _unitOfWork.CustomBrokerRepository.Save();
-            return View("Index", _unitOfWork.CustomApartmentRepository.GetAll());
+            _apartmentService.Submit(model);
+            return View("Index", _apartmentService.GetAll());
         }
     }
 }

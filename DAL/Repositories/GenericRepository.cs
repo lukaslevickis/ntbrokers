@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace NTBrokers.DAL.Repositories
@@ -14,9 +15,14 @@ namespace NTBrokers.DAL.Repositories
             this.dbSet = context.Set<TEntity>();
         }
 
-        public IQueryable<TEntity> GetAll()
+        public List<TEntity> GetAll()
         {
-            return dbSet;
+            return dbSet.ToList();
+        }
+
+        public void Insert(TEntity entity)
+        {
+            dbSet.Add(entity);
         }
 
         public void Save()
@@ -39,6 +45,16 @@ namespace NTBrokers.DAL.Repositories
         {
             TEntity entityToDelete = dbSet.Find(id);
             Delete(entityToDelete);
+        }
+
+        public virtual void Delete(TEntity entityToDelete)
+        {
+            if (_context.Entry(entityToDelete).State == EntityState.Detached)
+            {
+                dbSet.Attach(entityToDelete);
+            }
+
+            dbSet.Remove(entityToDelete);
         }
     }
 }

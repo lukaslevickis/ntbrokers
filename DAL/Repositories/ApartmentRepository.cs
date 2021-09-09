@@ -1,29 +1,20 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NTBrokers.DAL.Entities;
 using NTBrokers.Models.Apartments;
 
 namespace NTBrokers.DAL.Repositories
 {
-    public class ApartmentRepository
+    public class ApartmentRepository: GenericRepository<Apartment>, IApartmentRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public ApartmentRepository(ApplicationDbContext context)
+        public ApartmentRepository(ApplicationDbContext context): base(context)
         {
             _context = context;
         }
 
-        public void InsertApartment(Apartment apartment)
-        {
-            _context.Apartments.Add(apartment);
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
-        }
-
-        public IQueryable<ApartmentModel> GetAll()
+        public List<ApartmentModel> GetAllApartmentsInfo()
         {
             IQueryable<ApartmentModel> result =
                         from apartment in _context.Apartments
@@ -40,14 +31,14 @@ namespace NTBrokers.DAL.Repositories
                             FlatFloor = apartment.FlatFloor,
                             BuildingFloors = apartment.BuildingFloors,
                             Area = apartment.Area,
-                            BrokerId = apartment.BrokerId,
+                            BrokerId = apartment.BrokerId,          //todo linq method syntax
                             CompanyId = apartment.CompanyId,
                             Name = broker.Name,
                             Surname = broker.Surname,
                             CompanyName = company.CompanyName
                         };
 
-            return result;
+            return result.ToList();
         }
     }
 }

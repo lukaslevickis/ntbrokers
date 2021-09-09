@@ -10,7 +10,7 @@ using NTBrokers.DAL;
 namespace NTBrokers.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210903134603_InitialCreate")]
+    [Migration("20210909081753_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,13 +132,13 @@ namespace NTBrokers.Migrations
                     b.HasOne("NTBrokers.DAL.Entities.Broker", "Broker")
                         .WithMany("Companies")
                         .HasForeignKey("BrokerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("NTBrokers.DAL.Entities.Company", "Company")
                         .WithMany("Brokers")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Broker");

@@ -22,12 +22,14 @@ namespace NTBrokers
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:Default"]));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
+            services.AddScoped<UnitOfWork>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ApartmentRepository>();
-            services.AddScoped<CompanyRepository>();
-            services.AddScoped<BrokerRepository>();
-            services.AddScoped<CompanyBrokerService>();
+            services.AddScoped<CompanyBrokerRepository>();
+            services.AddScoped<CompanyService>();
+            services.AddScoped<BrokerService>();
+            services.AddScoped<ApartmentService>();
             services.AddControllersWithViews();
         }
 

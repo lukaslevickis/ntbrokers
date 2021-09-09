@@ -1,4 +1,5 @@
-﻿using NTBrokers.DAL.Entities;
+﻿using System;
+using NTBrokers.DAL.Entities;
 using NTBrokers.DAL.Repositories;
 
 namespace NTBrokers.DAL
@@ -6,31 +7,14 @@ namespace NTBrokers.DAL
     public class UnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        private GenericRepository<Apartment> _apartmentRepository;
         private GenericRepository<Broker> _brokerRepository;
         private GenericRepository<Company> _companyRepository;
-        private GenericRepository<CompanyBroker> _companyBrokerRepository;
-        private CompanyRepository _customCompanyRepository;
-        private ApartmentRepository _customApartmentRepository;
-        private BrokerRepository _customBrokerRepository;
-        private CompanyBrokerRepository _customCompanyBrokerRepository;
+        private CompanyBrokerRepository _companyBrokerRepository;
+        private ApartmentRepository _apartmentRepository;
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
-        }
-
-        public GenericRepository<Apartment> ApartmentRepository
-        {
-            get
-            {
-                if (this._apartmentRepository == null)
-                {
-                    this._apartmentRepository = new GenericRepository<Apartment>(_context);
-                }
-
-                return _apartmentRepository;
-            }
         }
 
         public GenericRepository<Broker> BrokerRepository
@@ -59,68 +43,29 @@ namespace NTBrokers.DAL
             }
         }
 
-        public GenericRepository<CompanyBroker> CompanyBrokerRepository
+        public CompanyBrokerRepository CompanyBrokerRepository
         {
             get
             {
                 if (this._companyBrokerRepository == null)
                 {
-                    this._companyBrokerRepository = new GenericRepository<CompanyBroker>(_context);
+                    this._companyBrokerRepository = new CompanyBrokerRepository(_context);
                 }
 
                 return _companyBrokerRepository;
             }
         }
 
-        public ApartmentRepository CustomApartmentRepository
+        public ApartmentRepository ApartmentRepository
         {
             get
             {
-                if (this._customApartmentRepository == null)
+                if (this._apartmentRepository == null)
                 {
-                    this._customApartmentRepository = new ApartmentRepository(_context);
+                    this._apartmentRepository = new ApartmentRepository(_context);
                 }
 
-                return _customApartmentRepository;
-            }
-        }
-
-        public CompanyRepository CustomCompanyRepository
-        {
-            get
-            {
-                if (this._customCompanyRepository == null)
-                {
-                    this._customCompanyRepository = new CompanyRepository(_context);
-                }
-
-                return _customCompanyRepository;
-            }
-        }
-
-        public BrokerRepository CustomBrokerRepository
-        {
-            get
-            {
-                if (this._customBrokerRepository == null)
-                {
-                    this._customBrokerRepository = new BrokerRepository(_context);
-                }
-
-                return _customBrokerRepository;
-            }
-        }
-
-        public CompanyBrokerRepository CustomCompanyBrokerRepository
-        {
-            get
-            {
-                if (this._customCompanyBrokerRepository == null)
-                {
-                    this._customCompanyBrokerRepository = new CompanyBrokerRepository(_context);
-                }
-
-                return _customCompanyBrokerRepository;
+                return _apartmentRepository;
             }
         }
     }

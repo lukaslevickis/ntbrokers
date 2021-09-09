@@ -1,5 +1,4 @@
-﻿using System;
-namespace NTBrokers.DAL.Entities
+﻿namespace NTBrokers.DAL.Entities
 {
     public class CompanyBroker
     {
