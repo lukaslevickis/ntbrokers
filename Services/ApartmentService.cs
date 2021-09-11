@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NTBrokers.DAL;
 using NTBrokers.DAL.Entities;
 using NTBrokers.Models.Apartments;
@@ -14,24 +15,24 @@ namespace NTBrokers.Services
             _unitOfWork = unitOfWork;
         }
 
-        public List<ApartmentModel> GetAll()
+        public async Task<List<ApartmentModel>> GetAllAsync()
         {
-            return _unitOfWork.ApartmentRepository.GetAllApartmentsInfo();
+            return await _unitOfWork.ApartmentRepository.GetAllApartmentsInfoAsync();
         }
 
-        public ApartmentCreateModel Create()
+        public async Task<ApartmentCreateModel> CreateAsync()
         {
             return new()
             {
                 Apartment = new Apartment(),
-                Companies = _unitOfWork.CompanyRepository.GetAll()
+                Companies = await _unitOfWork.CompanyRepository.GetAllAsync()
             };
         }
 
-        public void Submit(ApartmentCreateModel model)
+        public async Task SubmitAsync(ApartmentCreateModel model)
         {
-            _unitOfWork.ApartmentRepository.Insert(model.Apartment);
-            _unitOfWork.ApartmentRepository.Save();
+            await _unitOfWork.ApartmentRepository.InsertAsync(model.Apartment);
+            await _unitOfWork.SaveAsync();
         }
     }
 }

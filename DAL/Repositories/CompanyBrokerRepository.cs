@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using NTBrokers.DAL.Entities;
 
 namespace NTBrokers.DAL.Repositories
@@ -12,9 +13,9 @@ namespace NTBrokers.DAL.Repositories
             _context = context;
         }
 
-        public virtual void DeleteCompanyBroker(int brokerId, int companyId)
+        public virtual async Task DeleteCompanyBrokerAsync(int brokerId, int companyId)
         {
-            CompanyBroker entityToDelete = _context.CompanyBrokers.Find(brokerId, companyId);
+            CompanyBroker entityToDelete = await _context.CompanyBrokers.FindAsync(brokerId, companyId);
             Remove(entityToDelete);
         }
 

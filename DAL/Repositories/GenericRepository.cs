@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace NTBrokers.DAL.Repositories
@@ -15,24 +16,19 @@ namespace NTBrokers.DAL.Repositories
             this.dbSet = context.Set<TEntity>();
         }
 
-        public List<TEntity> GetAll()
+        public virtual async Task<List<TEntity>> GetAllAsync()
         {
-            return dbSet.ToList();
+            return await dbSet.ToListAsync();
         }
 
-        public void Insert(TEntity entity)
+        public virtual async Task InsertAsync(TEntity entity)
         {
-            dbSet.Add(entity);
+            await dbSet.AddAsync(entity);
         }
 
-        public void Save()
+        public virtual async Task<TEntity> GetByIDAsync(object id)
         {
-            _context.SaveChanges();
-        }
-
-        public virtual TEntity GetByID(object id)
-        {
-            return dbSet.Find(id);
+            return await dbSet.FindAsync(id);
         }
 
         public virtual void Update(TEntity entityToUpdate)
@@ -41,9 +37,9 @@ namespace NTBrokers.DAL.Repositories
             _context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
-        public virtual void Delete(object id)
+        public virtual async Task DeleteAsync(object id)
         {
-            TEntity entityToDelete = dbSet.Find(id);
+            TEntity entityToDelete = await dbSet.FindAsync(id);
             Delete(entityToDelete);
         }
 

@@ -22,7 +22,7 @@
             <td>@item.FlatFloor</td>
             <td>@item.BuildingFloors</td>
             <td>@item.Area</td>
-            <td>@Html.ActionLink("Add", "UpdateApartment", new { brokerId = Model.BrokerId, apartmentId = item.Id })</td>
+            <td>@Html.ActionLink("Add", "UpdateApartmentAsync", new { brokerId = Model.BrokerId, apartmentId = item.Id })</td>
         </tr>
         }
     </tbody>

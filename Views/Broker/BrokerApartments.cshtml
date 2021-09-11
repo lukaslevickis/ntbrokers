@@ -4,7 +4,7 @@
 
 <h3>List of @Model.Broker.Name @Model.Broker.Surname apartments</h3>
 
-@using (Html.BeginForm("Filter", "Broker", new { brokerId = Model.Broker.BrokerId, broker = Model.Broker.Name + " " + Model.Broker.Surname }, FormMethod.Post))
+@using (Html.BeginForm("FilterAsync", "Broker", new { brokerId = Model.Broker.BrokerId, broker = Model.Broker.Name + " " + Model.Broker.Surname }, FormMethod.Post))
 {
     <div class="container-full" style="background-color:aliceblue">
         <div class="container">

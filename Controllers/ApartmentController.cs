@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using NTBrokers.Models.Apartments;
 using NTBrokers.Services;
 
@@ -16,20 +17,22 @@ namespace NTBrokers.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        [ActionName("Index")]
+        public async Task<IActionResult> IndexAsync()
         {
-            return View(_apartmentService.GetAll());
+            return View(await _apartmentService.GetAllAsync());
         }
 
-        public IActionResult Create()
+        [ActionName("Create")]
+        public async Task<IActionResult> CreateAsync()
         {
-            return View(_apartmentService.Create());
+            return View(await _apartmentService.CreateAsync());
         }
 
-        public IActionResult Submit(ApartmentCreateModel model)
+        public async Task<IActionResult> SubmitAsync(ApartmentCreateModel model)
         {
-            _apartmentService.Submit(model);
-            return View("Index", _apartmentService.GetAll());
+            await _apartmentService.SubmitAsync(model);
+            return View("Index", await _apartmentService.GetAllAsync());
         }
     }
 }

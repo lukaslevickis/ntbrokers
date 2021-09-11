@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NTBrokers.DAL.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        List<TEntity> GetAll();
-        void Insert(TEntity entity);
-        TEntity GetByID(object id);
+        Task<List<TEntity>> GetAllAsync();
+        Task InsertAsync(TEntity entity);
+        Task<TEntity> GetByIDAsync(object id);
         void Update(TEntity entity);
-        void Delete(object id);
+        Task DeleteAsync(object id);
     }
 }

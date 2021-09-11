@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NTBrokers.DAL.Entities;
 using NTBrokers.DAL.Repositories;
 
@@ -15,6 +16,11 @@ namespace NTBrokers.DAL
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
 
         public GenericRepository<Broker> BrokerRepository

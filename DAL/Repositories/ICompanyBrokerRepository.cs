@@ -1,9 +1,10 @@
-﻿using NTBrokers.DAL.Entities;
+﻿using System.Threading.Tasks;
+using NTBrokers.DAL.Entities;
 
 namespace NTBrokers.DAL.Repositories
 {
     public interface ICompanyBrokerRepository: IGenericRepository<CompanyBroker>
     {
-        void DeleteCompanyBroker(int brokerId, int companyId);
+        Task DeleteCompanyBrokerAsync(int brokerId, int companyId);
     }
 }

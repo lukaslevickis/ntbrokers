@@ -2,7 +2,7 @@
 
 <h3>Brokers in @Model.CompanyName company</h3>
 
-@using (Html.BeginForm("SortBy", "Company", new { companyName = $"{Model.CompanyName}" }, FormMethod.Post))
+@using (Html.BeginForm("SortByAsync", "Company", new { companyName = $"{Model.CompanyName}" }, FormMethod.Post))
 {
     <div class="container-full" style="background-color:aliceblue">
         <div class="container">

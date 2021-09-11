@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NTBrokers.DAL;
 using NTBrokers.DAL.Entities;
 using NTBrokers.Models.Companies;
@@ -32,28 +33,26 @@ namespace NTBrokers.Services
             }
         }
 
-        public void InsertCompanyBroker(CompanyCreateModel model)
+        public async Task InsertCompanyBrokerAsync(CompanyCreateModel model)
         {
             int companyId = model.Company.CompanyId;
             foreach (int brokerId in model.CreateFormSelectedBrokers)
             {
                 CompanyBroker companyBroker = new() { BrokerId = brokerId, CompanyId = companyId };
-                _unitOfWork.CompanyBrokerRepository.Insert(companyBroker);
-                _unitOfWork.CompanyBrokerRepository.Save();
+                await _unitOfWork.CompanyBrokerRepository.InsertAsync(companyBroker);
+                await _unitOfWork.SaveAsync();
             }
         }
 
-        public void UpdateCompanyBrokers(CompanyCreateModel model)
+        public async Task UpdateCompanyBrokersAsync(CompanyCreateModel model)
         {
             _unitOfWork.CompanyRepository.Update(model.Company);
-            _unitOfWork.CompanyRepository.Save();
-            List<int> existingBrokers = _unitOfWork
-                                            .CompanyBrokerRepository.GetAll()
-                                                                    .Where(x => x.CompanyId == model.Company.CompanyId)
-                                                                    .Select(b => b.BrokerId).ToList();
+            await _unitOfWork.SaveAsync();
+            List<CompanyBroker> companyBrokers = await _unitOfWork.CompanyBrokerRepository.GetAllAsync();
+            List<int> existingBrokers = companyBrokers.Where(x => x.CompanyId == model.Company.CompanyId).Select(b => b.BrokerId).ToList();
 
             GetCompanyBrokersID(model.CreateFormSelectedBrokers, existingBrokers,
-                                                      out List<int> brokersToRemove, out List<int> brokersToAdd);
+                                out List<int> brokersToRemove, out List<int> brokersToAdd);
 
 
             if (brokersToAdd != null)
@@ -61,8 +60,8 @@ namespace NTBrokers.Services
                 foreach (int brokerId in brokersToAdd)
                 {
                     CompanyBroker companyBroker = new() { BrokerId = brokerId, CompanyId = model.Company.CompanyId };
-                    _unitOfWork.CompanyBrokerRepository.Insert(companyBroker);
-                    _unitOfWork.CompanyBrokerRepository.Save();
+                    await _unitOfWork.CompanyBrokerRepository.InsertAsync(companyBroker);
+                    await _unitOfWork.SaveAsync();
                 }
             }
 
@@ -70,25 +69,25 @@ namespace NTBrokers.Services
             {
                 foreach (int brokerId in brokersToRemove)
                 {
-                    _unitOfWork.CompanyBrokerRepository.DeleteCompanyBroker(brokerId, model.Company.CompanyId);
-                    _unitOfWork.CompanyBrokerRepository.Save();
+                    await _unitOfWork.CompanyBrokerRepository.DeleteCompanyBrokerAsync(brokerId, model.Company.CompanyId);
+                    await _unitOfWork.SaveAsync();
                 }
             }
         }
 
-        public CompanyBrokersModel SortBy(CompanyBrokersModel model, string companyName)
+        public async Task<CompanyBrokersModel> SortByAsync(CompanyBrokersModel model, string companyName)
         {
-            List<Company> companies = _unitOfWork.CompanyRepository.GetAll();
+            List<Company> companies = await _unitOfWork.CompanyRepository.GetAllAsync();
             int companyId = companies.Where(x => x.CompanyName == companyName).Select(x => x.CompanyId).FirstOrDefault();
-            List<int> brokersIds = _unitOfWork.CompanyBrokerRepository.GetAll().Where(x => x.CompanyId == companyId)
-                                                                      .Select(b => b.BrokerId).ToList();
+
+            List<CompanyBroker> companyBrokers = await _unitOfWork.CompanyBrokerRepository.GetAllAsync();
+            List<int> brokersIds = companyBrokers.Where(x => x.CompanyId == companyId).Select(b => b.BrokerId).ToList();
 
             CompanyBrokersModel data = new();
-            data.CompanyName = companies.Where(x => x.CompanyId == companyId)
-                                                                      .Select(b => b.CompanyName).FirstOrDefault();
+            data.CompanyName = companies.Where(x => x.CompanyId == companyId).Select(b => b.CompanyName).FirstOrDefault();
 
-            data.Brokers = _unitOfWork.BrokerRepository.GetAll()
-                                                       .Where(x => brokersIds.Contains(x.BrokerId)).ToList();
+            List<Broker> brokers = await _unitOfWork.BrokerRepository.GetAllAsync();
+            data.Brokers = brokers.Where(x => brokersIds.Contains(x.BrokerId)).ToList();
 
             data.Brokers = model.FilterSort.SortOrder == "Name" ? data.Brokers.OrderBy(x => x.Name).ToList()
                                                                 : data.Brokers.OrderBy(x => x.Surname).ToList();
@@ -98,53 +97,54 @@ namespace NTBrokers.Services
             return data;
         }
 
-        public CompanyBrokersModel GetCompanyBrokers(int companyId)
+        public async Task<CompanyBrokersModel> GetCompanyBrokersAsync(int companyId)
         {
-            List<int> brokersIds = _unitOfWork.CompanyBrokerRepository.GetAll().Where(x => x.CompanyId == companyId)
+            List<CompanyBroker> companyBrokers = await _unitOfWork.CompanyBrokerRepository.GetAllAsync();
+            List<int> brokersIds = companyBrokers.Where(x => x.CompanyId == companyId)
                                                                       .Select(b => b.BrokerId).ToList();
 
             CompanyBrokersModel data = new();
-            data.CompanyName = _unitOfWork.CompanyRepository.GetAll().Where(x => x.CompanyId == companyId)
-                                                                      .Select(b => b.CompanyName).FirstOrDefault();
+            List<Company> companies = await _unitOfWork.CompanyRepository.GetAllAsync();
+            data.CompanyName = companies.Where(x => x.CompanyId == companyId).Select(b => b.CompanyName).FirstOrDefault();
 
-            data.Brokers = _unitOfWork.BrokerRepository.GetAll()
-                                                       .Where(x => brokersIds.Contains(x.BrokerId)).ToList();
+            List<Broker> brokers = await _unitOfWork.BrokerRepository.GetAllAsync();
+            data.Brokers = brokers.Where(x => brokersIds.Contains(x.BrokerId)).ToList();
 
             return data;
         }
 
-        public CompanyCreateModel Edit(int companyId)
+        public async Task<CompanyCreateModel> EditAsync(int companyId)
         {
-            List<int> brokersIds = _unitOfWork.CompanyBrokerRepository.GetAll().Where(x => x.CompanyId == companyId)
-                                                                      .Select(b => b.BrokerId).ToList();
+            List<CompanyBroker> companyBrokers = await _unitOfWork.CompanyBrokerRepository.GetAllAsync();
+            List<int> brokersIds = companyBrokers.Where(x => x.CompanyId == companyId).Select(b => b.BrokerId).ToList();
 
-            List<Broker> brokers = _unitOfWork.BrokerRepository.GetAll();
+            List<Broker> brokers = await _unitOfWork.BrokerRepository.GetAllAsync();
             return new()
             {
                 Brokers = brokers,
                 SelectedBrokers = brokers.Where(x => brokersIds.Contains(x.BrokerId)).ToList(),
-                Company = _unitOfWork.CompanyRepository.GetByID(companyId)
+                Company = await _unitOfWork.CompanyRepository.GetByIDAsync(companyId)
             };
         }
 
-        public void Insert(Company company)
+        public async Task InsertAsync(Company company)
         {
-            _unitOfWork.CompanyRepository.Insert(company);
-            _unitOfWork.CompanyRepository.Save();
+            await _unitOfWork.CompanyRepository.InsertAsync(company);
+            await _unitOfWork.SaveAsync();
         }
 
-        public CompanyCreateModel Create()
+        public async Task<CompanyCreateModel> CreateAsync()
         {
             return new()
             {
-                Brokers = _unitOfWork.BrokerRepository.GetAll(),
+                Brokers = await _unitOfWork.BrokerRepository.GetAllAsync(),
                 Company = new Company()
             };
         }
 
-        public List<Company> GetAll()
+        public async Task<List<Company>> GetAllAsync()
         {
-            return _unitOfWork.CompanyRepository.GetAll();
+            return await _unitOfWork.CompanyRepository.GetAllAsync();
         }
     }
 }

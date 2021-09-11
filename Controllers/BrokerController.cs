@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using NTBrokers.DAL.Entities;
 using NTBrokers.Models.Brokers;
 using NTBrokers.Services;
@@ -17,15 +18,16 @@ namespace NTBrokers.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        [ActionName("Index")]
+        public async Task<IActionResult> IndexAsync()
         {
-            return View(_brokerService.GetAll());
+            return View(await _brokerService.GetAllAsync());
         }
 
-        public IActionResult Submit(Broker model)
+        public async Task<IActionResult> SubmitAsync(Broker model)
         {
-            _brokerService.Insert(model);
-            return View("Index", _brokerService.GetAll());
+            await _brokerService.InsertAsync(model);
+            return View("Index", await _brokerService.GetAllAsync());
         }
 
         public IActionResult Create()
@@ -33,26 +35,28 @@ namespace NTBrokers.Controllers
             return View();
         }
 
-        public IActionResult BrokerApartments(int brokerId)
+        [ActionName("BrokerApartments")]
+        public async Task<IActionResult> BrokerApartmentsAsync(int brokerId)
         {
-            return View("BrokerApartments", _brokerService.GetBrokerApartments(brokerId));
+            return View("BrokerApartments", await _brokerService.GetBrokerApartmentsAsync(brokerId));
         }
 
-        public IActionResult AddApartment(int brokerId)
+        [ActionName("AddApartment")]
+        public async Task<IActionResult> AddApartmentAsync(int brokerId)
         {
-            return View("AddApartment", _brokerService.AddApartment(brokerId));
+            return View("AddApartment", await _brokerService.AddApartmentAsync(brokerId));
         }
 
-        public IActionResult UpdateApartment(int brokerId, int apartmentId)
+        public async Task<IActionResult> UpdateApartmentAsync(int brokerId, int apartmentId)
         {
-            _brokerService.UpdateApartment(brokerId, apartmentId);
-            return View("BrokerApartments", _brokerService.GetBrokerApartments(brokerId));
+            await _brokerService.UpdateApartmentAsync(brokerId, apartmentId);
+            return View("BrokerApartments", await _brokerService.GetBrokerApartmentsAsync(brokerId));
         }
 
         [HttpPost]
-        public IActionResult Filter(BrokerApartmentsModel model, int brokerId, string broker)
+        public async Task<IActionResult> FilterAsync(BrokerApartmentsModel model, int brokerId, string broker)
         {
-            return View("BrokerApartments", _brokerService.Filter(model, brokerId, broker));
+            return View("BrokerApartments", await _brokerService.FilterAsync(model, brokerId, broker));
         }
     }
 }

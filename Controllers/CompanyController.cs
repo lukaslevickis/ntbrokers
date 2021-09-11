@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using NTBrokers.Models.Companies;
 using NTBrokers.Services;
 
@@ -16,43 +17,47 @@ namespace NTBrokers.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        [ActionName("Index")]
+        public async Task<IActionResult> IndexAsync()
         {
-            return View(_companyService.GetAll());
+            return View(await _companyService.GetAllAsync());
         }
 
-        public IActionResult Create()
+        [ActionName("Create")]
+        public async Task<IActionResult> CreateAsync()
         {
-            return View(_companyService.Create());
+            return View(await _companyService.CreateAsync());
         }
 
-        public IActionResult Submit(CompanyCreateModel model)
+        public async Task<IActionResult> SubmitAsync(CompanyCreateModel model)
         {
-            _companyService.Insert(model.Company);
-            _companyService.InsertCompanyBroker(model);
-            return View("Index", _companyService.GetAll());
+            await _companyService.InsertAsync(model.Company);
+            await _companyService.InsertCompanyBrokerAsync(model);
+            return View("Index", await _companyService.GetAllAsync());
         }
 
-        public IActionResult CompanyBrokers(int companyId)
+        [ActionName("CompanyBrokers")]
+        public async Task<IActionResult> CompanyBrokersAsync(int companyId)
         {
-            return View(_companyService.GetCompanyBrokers(companyId));
+            return View(await _companyService.GetCompanyBrokersAsync(companyId));
         }
 
-        public IActionResult Edit(int companyId)
+        [ActionName("Edit")]
+        public async Task<IActionResult> EditAsync(int companyId)
         {
-            return View(_companyService.Edit(companyId));
+            return View(await _companyService.EditAsync(companyId));
         }
 
-        public IActionResult Update(CompanyCreateModel model)
+        public async Task<IActionResult> UpdateAsync(CompanyCreateModel model)
         {
-            _companyService.UpdateCompanyBrokers(model);
-            return View("Index", _companyService.GetAll());
+            await _companyService.UpdateCompanyBrokersAsync(model);
+            return View("Index", await _companyService.GetAllAsync());
         }
 
         [HttpPost]
-        public IActionResult SortBy(CompanyBrokersModel model, string companyName)
+        public async Task<IActionResult> SortByAsync(CompanyBrokersModel model, string companyName)
         {
-            return View("CompanyBrokers", _companyService.SortBy(model, companyName));
+            return View("CompanyBrokers", await _companyService.SortByAsync(model, companyName));
         }
     }
 }

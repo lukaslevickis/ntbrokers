@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using NTBrokers.DAL.Entities;
 using NTBrokers.Models.Apartments;
 
@@ -14,7 +16,7 @@ namespace NTBrokers.DAL.Repositories
             _context = context;
         }
 
-        public List<ApartmentModel> GetAllApartmentsInfo()
+        public async Task<List<ApartmentModel>> GetAllApartmentsInfoAsync()
         {
             IQueryable<ApartmentModel> result =
                         from apartment in _context.Apartments
@@ -38,7 +40,7 @@ namespace NTBrokers.DAL.Repositories
                             CompanyName = company.CompanyName
                         };
 
-            return result.ToList();
+            return await result.ToListAsync();
         }
     }
 }
